@@ -6,7 +6,7 @@
 
 1. Clonar repositorio  
    ```bash
-   git clone <url-del-repo>
+   git clone https://github.com/diegooooo10/app_motoservice.git
    cd app_motoservice
 
 2. Instala dependencias
