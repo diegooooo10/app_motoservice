@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194888808448",
+    "project_id": "app-motoservices",
+    "storage_bucket": "app-motoservices.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194888808448:android:6451be0f54044bf7ae40e5",
+        "android_client_info": {
+          "package_name": "com.example.app_motoservice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr7qkqLB-X0H0aFbG6KFWSDPxD4yqvvQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

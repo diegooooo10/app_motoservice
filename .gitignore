@@ -1,0 +1,41 @@
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+app.*.symbols
+app.*.map.json
+
+# Ignorar secretos y archivos generados
+.env
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Android Studio
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Otros
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.idea/
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
