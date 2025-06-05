@@ -17,7 +17,7 @@ class _PruebaFirebaseState extends State<PruebaFirebase> {
     return Scaffold(
       body: Center(
         child: FutureBuilder(
-          future: getUser(),
+          future: FirebaseService.getUser(),
           builder: ((context, snapshot) {
             return ListView.builder(
               itemCount: snapshot.data?.length ?? 0,
