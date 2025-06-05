@@ -1,5 +1,5 @@
-import 'package:app_motoservice/screens/inicio.dart';
 import 'package:app_motoservice/theme/colors.dart';
+import 'package:app_motoservice/screens/barra_navegacion.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +34,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Mototaxis();
+    return BarraNavegacion();
   }
 }
