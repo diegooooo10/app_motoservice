@@ -1,4 +1,4 @@
-import 'package:app_motoservice/screens/prueba_firebase.dart';
+import 'package:app_motoservice/screens/inicio.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,6 +34,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PruebaFirebase();
+    return Mototaxis();
   }
 }
