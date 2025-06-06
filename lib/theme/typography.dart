@@ -1,10 +1,12 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class TamanoLetra {
-  static const double tituloGrande = 24.0;
-  static const double tituloMediano = 20.0;
-  static const double textoNormal = 16.0;
-  static const double textoPequeno = 14.0;
-  static const double textoMuyPequeno = 12.0;
-  static const double textoError = 11.0;
+  static double get tituloGrande    => 20.sp; 
+  static double get titulo          => 18.sp; 
+  static double get subtitulo       => 16.sp; 
+  static double get textoNormal     => 14.sp;
+  static double get textoPequeno    => 11.sp; 
+  static double get textoError      => 11.sp; 
 }
 /*
 Ejemplo de uso: 
