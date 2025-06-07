@@ -1,5 +1,6 @@
 import 'package:app_motoservice/screens/inicio.dart';
 import 'package:app_motoservice/theme/colors.dart';
+import 'formulario_screen.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class BarraNavegacion extends StatefulWidget {
 
 class _MainNavigatorState extends State<BarraNavegacion> {
   int _selectedIndex = 0;
-  static final List<Widget> _pages = <Widget>[Mototaxis(), Ejemplo()];
+  static final List<Widget> _pages = <Widget>[Mototaxis(), FormularioScreen()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
