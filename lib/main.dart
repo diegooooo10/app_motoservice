@@ -1,3 +1,4 @@
+import 'package:app_motoservice/screens/splash_screen.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/screens/barra_navegacion.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     ScreenUtilInit(
-      designSize: Size(360, 690),
+      designSize: const Size(360, 690),
       minTextAdapt: true,
       builder: (context, child) {
         return MaterialApp(
@@ -22,7 +23,11 @@ void main() async {
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: ColoresApp.primario),
           ),
-          home: const MainApp(),
+          home: SplashScreen(
+            nextScreen: const MainApp(),
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.white,
+          ),
         );
       },
     ),
@@ -34,6 +39,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BarraNavegacion();
+    return const BarraNavegacion();
   }
 }
