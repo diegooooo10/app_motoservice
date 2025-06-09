@@ -1,172 +1,176 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:app_motoservice/theme/colors.dart';
+import 'package:app_motoservice/theme/iconos.dart';
+import 'package:app_motoservice/theme/typography.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class NuevoServicio extends StatelessWidget {
   const NuevoServicio({super.key});
 
-  Widget buildTextFieldCard({
-    required IconData icon,
-    required String label,
-    required TextEditingController controller,
-    bool readOnly = false,
-    VoidCallback? onTap,
-  }) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: TextFormField(
-          controller: controller,
-          style: const TextStyle(fontSize: 14),
-          readOnly: readOnly,
-          onTap: onTap,
-          decoration: InputDecoration(
-            icon: Icon(icon, color: Colors.blue, size: 22),
-            labelText: label,
-            labelStyle: const TextStyle(fontSize: 13, color: Colors.black54),
-            floatingLabelStyle: const TextStyle(color: Colors.blue, fontSize: 12),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildDropdownCard({
-    required IconData icon,
-    required String label,
-    required String? value,
-    required List<String> items,
-    required Function(String?) onChanged,
-  }) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: DropdownButtonFormField<String>(
-          value: value,
-          icon: const Icon(Icons.arrow_drop_down),
-          decoration: InputDecoration(
-            icon: Icon(icon, color: Colors.blue, size: 22),
-            labelText: label,
-            labelStyle: const TextStyle(fontSize: 13, color: Colors.black54),
-            floatingLabelStyle: const TextStyle(color: Colors.blue, fontSize: 12),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              child: Text(item, style: const TextStyle(fontSize: 14)),
-            );
-          }).toList(),
-          onChanged: onChanged,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final placaController = TextEditingController();
-    final fechaController = TextEditingController();
-    final horaController = TextEditingController();
-    final comentariosController = TextEditingController();
+    final formKey = GlobalKey<FormBuilderState>();
+    final String hora = DateFormat.Hm().format(DateTime.now().toLocal());
 
-    String? servicioSeleccionado;
-    String? zonaSeleccionada;
+    final servicios = [
+      'Mantenimiento',
+      'Electrica',
+      'Cambio de llantas',
+      'Revisión y ajuste de frenos',
+      'Cambio de aceite',
+      'Lavado y estética',
+      'Lubricación de cadena',
+    ];
 
-    final servicios = ['Mantenimiento', 'Electrica', 'Cambio de llantas', "Revisión y ajuste de freonos", "Cambio de aceite", "Lavado y estética", "Lubricacion de cadena"];
-    final zonas = ['Selene', 'Las Arboledas', 'El tripangulo', "San fransisco tlaltenco", "Ojo de agua", "San miguel (Tláhuac)", "Quiahutla", "La ciénega"];
+    final zonas = [
+      'Selene',
+      'Las Arboledas',
+      'El triángulo',
+      'San Francisco Tlaltenco',
+      'Ojo de Agua',
+      'San Miguel (Tláhuac)',
+      'Quiahutla',
+      'La Ciénega',
+    ];
 
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            buildTextFieldCard(
-              icon: Icons.article_outlined,
-              label: 'Placa',
-              controller: placaController,
-            ),
-            buildDropdownCard(
-              icon: Icons.build_outlined,
-              label: 'Servicio',
-              value: servicioSeleccionado,
-              items: servicios,
-              onChanged: (val) {
-                servicioSeleccionado = val;
-              },
-            ),
-            buildDropdownCard(
-              icon: Icons.location_on_outlined,
-              label: 'Zona',
-              value: zonaSeleccionada,
-              items: zonas,
-              onChanged: (val) {
-                zonaSeleccionada = val;
-              },
-            ),
-            buildTextFieldCard(
-              icon: Icons.calendar_today,
-              label: 'Fecha',
-              controller: fechaController,
-              readOnly: true,
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                  initialDate: DateTime.now(),
-                );
-                if (pickedDate != null) {
-                  fechaController.text = "${pickedDate.toLocal()}".split(' ')[0];
-                }
-              },
-            ),
-            buildTextFieldCard(
-              icon: Icons.access_time,
-              label: 'Hora',
-              controller: horaController,
-              readOnly: true,
-              onTap: () async {
-                TimeOfDay? pickedTime = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                );
-                if (pickedTime != null) {
-                  horaController.text = pickedTime.format(context);
-                }
-              },
-            ),
-            buildTextFieldCard(
-              icon: Icons.comment_outlined,
-              label: 'Comentarios',
-              controller: comentariosController,
-            ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  //
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  elevation: 3,
+      backgroundColor: ColoresApp.fondo,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: FormBuilder(
+            key: formKey,
+            child: Column(
+              children: [
+                FormBuilderTextField(
+                  name: 'placa',
+                  decoration: _estiloInput('Placa', Icons.article_outlined),
+                  validator: FormBuilderValidators.required(
+                    errorText: 'La placa es obligatoria',
+                  ),
                 ),
-                child: const Text('Agregar servicio', style: TextStyle(fontSize: 13)),
-              ),
+                const SizedBox(height: 12),
+                FormBuilderDropdown(
+                  name: 'servicio',
+                  decoration: _estiloInput('', Icons.build_outlined),
+                  hint: Text(
+                    'Servicio',
+                    style: TextStyle(
+                      fontSize: TamanoLetra.textoNormal,
+                      color: ColoresApp.textoMedio,
+                    ),
+                  ),
+                  items:
+                      servicios
+                          .map(
+                            (serv) => DropdownMenuItem(
+                              value: serv,
+                              child: Text(serv),
+                            ),
+                          )
+                          .toList(),
+                  validator: FormBuilderValidators.required(
+                    errorText: 'Selecciona un servicio',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FormBuilderDropdown(
+                  name: 'zona',
+                  decoration: _estiloInput('', Icons.location_on_outlined),
+                  hint: Text(
+                    'Zona',
+                    style: TextStyle(
+                      fontSize: TamanoLetra.textoNormal,
+                      color: ColoresApp.textoMedio,
+                    ),
+                  ),
+                  items:
+                      zonas
+                          .map(
+                            (zona) => DropdownMenuItem(
+                              value: zona,
+                              child: Text(zona),
+                            ),
+                          )
+                          .toList(),
+                  validator: FormBuilderValidators.required(
+                    errorText: 'Selecciona una zona',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FormBuilderTextField(
+                  name: 'comentarios',
+                  maxLength: 150,
+                  decoration: _estiloInput(
+                    'Comentarios',
+                    Icons.comment_outlined,
+                  ),
+                  validator: FormBuilderValidators.compose([FormBuilderValidators.maxLength(150,
+                  errorText: "Máximo 150 caracteres")]),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState?.saveAndValidate() ?? false) {
+                        final data = formKey.currentState!.value;
+                        final servicioConHora = {...data, 'hora': hora};
+                        print(servicioConHora);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColoresApp.primario,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 14.h,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      elevation: 3,
+                    ),
+                    child: Text(
+                      'Agregar servicio',
+                      style: TextStyle(fontSize: TamanoLetra.textoNormal, color: ColoresApp.fondo),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _estiloInput(String label, IconData icono) {
+    return InputDecoration(
+      icon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
+      labelText: label.isNotEmpty ? label : null,
+      labelStyle: TextStyle(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.r),
+        borderSide: BorderSide(
+          color: ColoresApp.gris, 
+          width: 1.2,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.r),
+        borderSide: BorderSide(
+          color: ColoresApp.primario,
+          width: 1.4,
+        ),
+      ),
+      contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
     );
   }
 }
