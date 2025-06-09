@@ -15,7 +15,7 @@ class FormularioScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColoresApp.fondo,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: ColoresApp.fondo,
           elevation: 1,
           title: Text(
             'Formulario',
@@ -36,7 +36,7 @@ class FormularioScreen extends StatelessWidget {
               ),
               child: TabBar(
                 indicator: BoxDecoration(
-                  color: Colors.white,
+                  color: ColoresApp.fondoTarjeta,
                   borderRadius: BorderRadius.circular(25.r),
                   boxShadow: [
                     BoxShadow(
