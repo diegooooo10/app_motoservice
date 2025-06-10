@@ -2,6 +2,7 @@
 *.iml
 *.ipr
 *.iws
+*.nix
 .idea/
 app.*.symbols
 app.*.map.json
