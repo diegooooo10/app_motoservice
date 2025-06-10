@@ -1,16 +1,24 @@
 import 'package:app_motoservice/screens/splash_screen.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/screens/barra_navegacion.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es_ES');
   await dotenv.load(fileName: "assets/.env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final auth = FirebaseAuth.instance;
+
+  if (auth.currentUser == null) {
+    await auth.signInAnonymously();
+  }
   runApp(
     ScreenUtilInit(
       designSize: const Size(360, 690),
