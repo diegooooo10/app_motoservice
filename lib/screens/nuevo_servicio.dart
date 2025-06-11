@@ -4,8 +4,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NuevoServicio extends StatelessWidget {
   const NuevoServicio({super.key});
@@ -13,7 +14,6 @@ class NuevoServicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormBuilderState>();
-    final String hora = DateFormat.Hm().format(DateTime.now().toLocal());
 
     final servicios = [
       'Mantenimiento',
@@ -63,15 +63,9 @@ class NuevoServicio extends StatelessWidget {
                       color: ColoresApp.textoMedio,
                     ),
                   ),
-                  items:
-                      servicios
-                          .map(
-                            (serv) => DropdownMenuItem(
-                              value: serv,
-                              child: Text(serv),
-                            ),
-                          )
-                          .toList(),
+                  items: servicios
+                      .map((serv) => DropdownMenuItem(value: serv, child: Text(serv)))
+                      .toList(),
                   validator: FormBuilderValidators.required(
                     errorText: 'Selecciona un servicio',
                   ),
@@ -87,15 +81,9 @@ class NuevoServicio extends StatelessWidget {
                       color: ColoresApp.textoMedio,
                     ),
                   ),
-                  items:
-                      zonas
-                          .map(
-                            (zona) => DropdownMenuItem(
-                              value: zona,
-                              child: Text(zona),
-                            ),
-                          )
-                          .toList(),
+                  items: zonas
+                      .map((zona) => DropdownMenuItem(value: zona, child: Text(zona)))
+                      .toList(),
                   validator: FormBuilderValidators.required(
                     errorText: 'Selecciona una zona',
                   ),
@@ -104,39 +92,65 @@ class NuevoServicio extends StatelessWidget {
                 FormBuilderTextField(
                   name: 'comentarios',
                   maxLength: 150,
-                  decoration: _estiloInput(
-                    'Comentarios',
-                    Icons.comment_outlined,
-                  ),
-                  validator: FormBuilderValidators.compose([FormBuilderValidators.maxLength(150,
-                  errorText: "Máximo 150 caracteres")]),
+                  decoration: _estiloInput('Comentarios', Icons.comment_outlined),
+                  validator: FormBuilderValidators.maxLength(150,
+                      errorText: "Máximo 150 caracteres"),
                   maxLines: null,
                 ),
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (formKey.currentState?.saveAndValidate() ?? false) {
                         final data = formKey.currentState!.value;
-                        final servicioConHora = {...data, 'hora': hora};
-                        print(servicioConHora);
+                        final placa = data['placa'];
+
+                        final existe = await _placaRegistrada(placa);
+
+                        if (!existe) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('La placa no está registrada.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final ahora = DateTime.now().toUtc();
+                        final servicioConHora = {
+                          ...data,
+                          'fecha': ahora.toIso8601String(),
+                          'hora': DateFormat.Hm().format(ahora.toLocal()),
+                        };
+
+                        await FirebaseFirestore.instance
+                            .collection('servicios')
+                            .add(servicioConHora);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Servicio guardado correctamente.'),
+                            backgroundColor: ColoresApp.exito,
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColoresApp.primario,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 14.h,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       elevation: 3,
                     ),
                     child: Text(
                       'Agregar servicio',
-                      style: TextStyle(fontSize: TamanoLetra.textoNormal, color: ColoresApp.fondo),
+                      style: TextStyle(
+                        fontSize: TamanoLetra.textoNormal,
+                        color: ColoresApp.fondo,
+                      ),
                     ),
                   ),
                 ),
@@ -149,28 +163,41 @@ class NuevoServicio extends StatelessWidget {
   }
 
   InputDecoration _estiloInput(String label, IconData icono) {
-    return InputDecoration(
-      icon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
-      labelText: label.isNotEmpty ? label : null,
-      labelStyle: TextStyle(
-        fontSize: TamanoLetra.textoNormal,
-        color: ColoresApp.textoMedio,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(
-          color: ColoresApp.gris, 
-          width: 1.2,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(
-          color: ColoresApp.primario,
-          width: 1.4,
-        ),
-      ),
-      contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
-    );
+  return InputDecoration(
+    prefixIcon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
+    labelText: label.isNotEmpty ? label : null,
+    labelStyle: GoogleFonts.inter(
+      fontSize: TamanoLetra.textoNormal,
+      color: ColoresApp.textoMedio,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+    ),
+    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+  );
+}
+
+
+  Future<bool> _placaRegistrada(String placa) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('mototaxis')
+        .where('placa', isEqualTo: placa)
+        .limit(1)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
   }
 }

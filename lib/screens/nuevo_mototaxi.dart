@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NuevoMototaxi extends StatelessWidget {
   const NuevoMototaxi({super.key});
@@ -64,11 +64,11 @@ class NuevoMototaxi extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColoresApp.primario,
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 14.h,
+                        horizontal: 20,
+                        vertical: 14,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       elevation: 3,
                     ),
@@ -87,28 +87,30 @@ class NuevoMototaxi extends StatelessWidget {
   }
 
   InputDecoration _estiloInput(String label, IconData icono) {
-    return InputDecoration(
-      icon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
-      labelText: label.isNotEmpty ? label : null,
-      labelStyle: TextStyle(
-        fontSize: TamanoLetra.textoNormal,
-        color: ColoresApp.textoMedio,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(
-          color: ColoresApp.gris,
-          width: 1.2,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(
-          color: ColoresApp.primario,
-          width: 1.4,
-        ),
-      ),
-      contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
-    );
-  }
+  return InputDecoration(
+    prefixIcon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
+    labelText: label.isNotEmpty ? label : null,
+    labelStyle: GoogleFonts.inter(
+      fontSize: TamanoLetra.textoNormal,
+      color: ColoresApp.textoMedio,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+    ),
+    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+  );
+}
 }
