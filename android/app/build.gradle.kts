@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.app_motoservice"
-        minSdk = 21
+        minSdk = 23
         multiDexEnabled = true
         targetSdk = 35
         versionCode = 1

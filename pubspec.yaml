@@ -16,6 +16,10 @@ dependencies:
   form_builder_validators: ^11.1.2
   flutter_form_builder: ^10.0.1
   flutter_screenutil: ^5.9.3
+  firebase_auth: ^5.5.4
+  intl: ^0.19.0
+  flutter_native_splash: ^2.4.6
+
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +32,15 @@ flutter:
   assets:
     - assets/.env
     - assets/img/
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+
+  image: "assets/img/logo.png"
+  color: "#F9FAFB"
+
+  android_12:
+    color: "#F9FAFB"
+    image: "assets/img/logo.png"
