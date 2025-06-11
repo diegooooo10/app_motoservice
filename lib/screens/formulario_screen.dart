@@ -1,4 +1,7 @@
+import 'package:app_motoservice/theme/colors.dart';
+import 'package:app_motoservice/theme/typography.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'nuevo_mototaxi.dart';
 import 'nuevo_servicio.dart';
 
@@ -10,57 +13,53 @@ class FormularioScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: ColoresApp.fondo,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1,
-          title: const Text(
+          title: Text(
             'Formulario',
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: ColoresApp.textoOscuro,
+              fontSize: TamanoLetra.tituloGrande,
             ),
           ),
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE9ECEF),
-                borderRadius: BorderRadius.circular(30),
+            preferredSize: const Size.fromHeight(kToolbarHeight + 24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8,
               ),
-              child: TabBar(
-                indicator: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE9E9E9),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: TabBar(
+                  labelColor: ColoresApp.primario,
+                  unselectedLabelColor: ColoresApp.textoOscuro,
+                  indicator: BoxDecoration(
+                    color: ColoresApp.fondo,
+
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  dividerColor: Colors.transparent,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelStyle: GoogleFonts.inter(
+                    fontWeight: FontWeight.w500,
+                    fontSize: TamanoLetra.textoNormal,
+                  ),
+                  tabs: const [
+                    Tab(text: 'Nuevo mototaxi'),
+                    Tab(text: 'Nuevo servicio'),
                   ],
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorPadding: EdgeInsets.zero,
-                labelColor: Colors.blue.shade700,
-                unselectedLabelColor: Colors.grey.shade700,
-                labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-                tabs: const [
-                  Tab(text: 'Nuevo mototaxi'),
-                  Tab(text: 'Nuevo servicio'),
-                ],
               ),
             ),
           ),
         ),
-        body: const TabBarView(
-          children: [
-            NuevoMototaxi(),
-            NuevoServicio(),
-          ],
-        ),
+        body: const TabBarView(children: [NuevoMototaxi(), NuevoServicio()]),
       ),
     );
   }

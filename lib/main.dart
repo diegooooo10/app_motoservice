@@ -1,4 +1,3 @@
-import 'package:app_motoservice/screens/splash_screen.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/screens/barra_navegacion.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,9 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initializeDateFormatting('es_ES');
   await dotenv.load(fileName: "assets/.env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -31,19 +33,32 @@ void main() async {
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: ColoresApp.primario),
           ),
-          home: SplashScreen(
-            nextScreen: const MainApp(),
-            duration: const Duration(seconds: 3),
-            backgroundColor: Colors.white,
-          ),
+          home:MainApp()
         );
       },
     ),
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+
+class _MainAppState extends State<MainApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    initialization();
+  }
+  void initialization() async {
+    await Future.delayed(const Duration(seconds: 2));
+    FlutterNativeSplash.remove();
+  }
 
   @override
   Widget build(BuildContext context) {
