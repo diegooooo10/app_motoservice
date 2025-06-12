@@ -34,13 +34,12 @@ flutter:
     - assets/img/
 
 flutter_native_splash:
+  color: "#ffffff"
+  image: './assets/img/logo.png'
   android: true
   ios: true
-  web: true
-
-  image: "assets/img/logo.png"
-  color: "#F9FAFB"
 
   android_12:
-    color: "#F9FAFB"
-    image: "assets/img/logo.png"
+    color: "#ffffff"
+    image: './assets/img/logo.png'
+    icon_background_color: "#ffffff"
