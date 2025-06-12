@@ -9,18 +9,19 @@ import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await initializeDateFormatting('es_ES');
   await dotenv.load(fileName: "assets/.env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final auth = FirebaseAuth.instance;
 
+  final auth = FirebaseAuth.instance;
   if (auth.currentUser == null) {
     await auth.signInAnonymously();
   }
+  FlutterNativeSplash.remove();
   runApp(
     ScreenUtilInit(
       designSize: const Size(360, 690),
@@ -33,32 +34,15 @@ void main() async {
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: ColoresApp.primario),
           ),
-          home:MainApp()
+          home: const MainApp(),
         );
       },
     ),
   );
 }
 
-class MainApp extends StatefulWidget {
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-
-class _MainAppState extends State<MainApp> {
-
-  @override
-  void initState() {
-    super.initState();
-    initialization();
-  }
-  void initialization() async {
-    await Future.delayed(const Duration(seconds: 2));
-    FlutterNativeSplash.remove();
-  }
 
   @override
   Widget build(BuildContext context) {
