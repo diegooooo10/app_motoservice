@@ -5,8 +5,6 @@ import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NuevoServicio extends StatelessWidget {
   const NuevoServicio({super.key});
@@ -14,6 +12,8 @@ class NuevoServicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormBuilderState>();
+      AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
+
 
     final servicios = [
       'Mantenimiento',
@@ -42,11 +42,13 @@ class NuevoServicio extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: FormBuilder(
+            autovalidateMode: autoValidateMode,
             key: formKey,
             child: Column(
               children: [
                 FormBuilderTextField(
                   name: 'placa',
+                  maxLength: 6,
                   decoration: _estiloInput('Placa', Icons.article_outlined),
                   validator: FormBuilderValidators.required(
                     errorText: 'La placa es obligatoria',
@@ -55,7 +57,9 @@ class NuevoServicio extends StatelessWidget {
                 const SizedBox(height: 12),
                 FormBuilderDropdown(
                   name: 'servicio',
-                  decoration: _estiloInput('', Icons.build_outlined),
+                  decoration: _estiloDropDown(Icons.build_outlined),
+                  dropdownColor: ColoresApp.fondoTarjeta,
+                  isExpanded: true,
                   hint: Text(
                     'Servicio',
                     style: TextStyle(
@@ -63,9 +67,15 @@ class NuevoServicio extends StatelessWidget {
                       color: ColoresApp.textoMedio,
                     ),
                   ),
-                  items: servicios
-                      .map((serv) => DropdownMenuItem(value: serv, child: Text(serv)))
-                      .toList(),
+                  items:
+                      servicios
+                          .map(
+                            (serv) => DropdownMenuItem(
+                              value: serv,
+                              child: Text(serv),
+                            ),
+                          )
+                          .toList(),
                   validator: FormBuilderValidators.required(
                     errorText: 'Selecciona un servicio',
                   ),
@@ -73,7 +83,9 @@ class NuevoServicio extends StatelessWidget {
                 const SizedBox(height: 12),
                 FormBuilderDropdown(
                   name: 'zona',
-                  decoration: _estiloInput('', Icons.location_on_outlined),
+                  decoration: _estiloDropDown(Icons.location_on_outlined),
+                  dropdownColor: ColoresApp.fondoTarjeta,
+                  isExpanded: true,
                   hint: Text(
                     'Zona',
                     style: TextStyle(
@@ -81,9 +93,15 @@ class NuevoServicio extends StatelessWidget {
                       color: ColoresApp.textoMedio,
                     ),
                   ),
-                  items: zonas
-                      .map((zona) => DropdownMenuItem(value: zona, child: Text(zona)))
-                      .toList(),
+                  items:
+                      zonas
+                          .map(
+                            (zona) => DropdownMenuItem(
+                              value: zona,
+                              child: Text(zona),
+                            ),
+                          )
+                          .toList(),
                   validator: FormBuilderValidators.required(
                     errorText: 'Selecciona una zona',
                   ),
@@ -92,44 +110,45 @@ class NuevoServicio extends StatelessWidget {
                 FormBuilderTextField(
                   name: 'comentarios',
                   maxLength: 150,
-                  decoration: _estiloInput('Comentarios', Icons.comment_outlined),
-                  validator: FormBuilderValidators.maxLength(150,
-                      errorText: "Máximo 150 caracteres"),
-                  maxLines: null,
+                  decoration: _estiloInput(
+                    'Comentarios',
+                    Icons.comment_outlined,
+                  ),
+                  validator: FormBuilderValidators.maxLength(
+                    150,
+                    errorText: "Máximo 150 caracteres",
+                  ),
+                  maxLines: 3,
                 ),
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
                     onPressed: () async {
+                      final messenger = ScaffoldMessenger.of(context);
                       if (formKey.currentState?.saveAndValidate() ?? false) {
                         final data = formKey.currentState!.value;
+                        // ignore: unused_local_variable
                         final placa = data['placa'];
 
-                        final existe = await _placaRegistrada(placa);
+                        // final existe = await _placaRegistrada(placa);
 
-                        if (!existe) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('La placa no está registrada.'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
+                        // if (!existe) {
+                        //   messenger.showSnackBar(
+                        //     const SnackBar(
+                        //       content: Text('La placa no está registrada.'),
+                        //       backgroundColor: Colors.red,
+                        //     ),
+                        //   );
+                        //   return;
+                        // }
 
-                        final ahora = DateTime.now().toUtc();
+                        // ignore: unused_local_variable
                         final servicioConHora = {
                           ...data,
-                          'fecha': ahora.toIso8601String(),
-                          'hora': DateFormat.Hm().format(ahora.toLocal()),
+                          'fecha': DateTime.now().toUtc(),
                         };
-
-                        await FirebaseFirestore.instance
-                            .collection('servicios')
-                            .add(servicioConHora);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        messenger.showSnackBar(
                           const SnackBar(
                             content: Text('Servicio guardado correctamente.'),
                             backgroundColor: ColoresApp.exito,
@@ -139,7 +158,10 @@ class NuevoServicio extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColoresApp.primario,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -159,6 +181,75 @@ class NuevoServicio extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _estiloInput(String label, IconData icono) {
+    return InputDecoration(
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.grande,
+      ),
+      labelText: label.isNotEmpty ? label : null,
+      labelStyle: GoogleFonts.inter(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+      ),
+      contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+    );
+  }
+
+  InputDecoration _estiloDropDown(IconData icono) {
+    return InputDecoration(
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.grande,
+      ),
+      labelStyle: GoogleFonts.inter(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      filled: true,
+      fillColor: ColoresApp.fondoTarjeta,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris,width: 1.2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error,width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris,width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 

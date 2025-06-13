@@ -12,6 +12,7 @@ class NuevoMototaxi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormBuilderState>();
+    AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
 
     return Scaffold(
       backgroundColor: ColoresApp.fondo,
@@ -19,6 +20,7 @@ class NuevoMototaxi extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: FormBuilder(
+            autovalidateMode: autoValidateMode,
             key: formKey,
             child: Column(
               children: [
@@ -34,31 +36,44 @@ class NuevoMototaxi extends StatelessWidget {
                   name: 'numero',
                   keyboardType: TextInputType.number,
                   maxLength: 10,
-                  decoration: _estiloInput('Número (10 dígitos)', Icons.phone_outlined),
+                  decoration: _estiloInput(
+                    'Número telefónico',
+                    Icons.phone_outlined,
+                  ),
                   validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(errorText: 'El número es obligatorio'),
+                    FormBuilderValidators.required(
+                      errorText: 'El número es obligatorio',
+                    ),
                     FormBuilderValidators.numeric(errorText: 'Solo números'),
-                    FormBuilderValidators.equalLength(10, errorText: 'Debe tener 10 dígitos'),
+                    FormBuilderValidators.equalLength(
+                      10,
+                      errorText: 'Debe tener 10 dígitos',
+                    ),
                   ]),
                 ),
                 const SizedBox(height: 12),
                 FormBuilderTextField(
                   name: 'placa',
                   maxLength: 6,
-                  decoration: _estiloInput('Placa (6 caracteres)', Icons.article_outlined),
+                  decoration: _estiloInput('Placa', Icons.article_outlined),
                   validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(errorText: 'La placa es obligatoria'),
-                    FormBuilderValidators.maxLength(6, errorText: 'Máximo 6 caracteres'),
+                    FormBuilderValidators.required(
+                      errorText: 'La placa es obligatoria',
+                    ),
+                    FormBuilderValidators.maxLength(
+                      6,
+                      errorText: 'Máximo 6 caracteres',
+                    ),
                   ]),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState?.saveAndValidate() ?? false) {
+                        // ignore: unused_local_variable
                         final data = formKey.currentState!.value;
-                        print('Datos del mototaxi: $data');
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -73,8 +88,11 @@ class NuevoMototaxi extends StatelessWidget {
                       elevation: 3,
                     ),
                     child: Text(
-                      'Dar de alta',
-                      style: TextStyle(fontSize: TamanoLetra.textoNormal, color: ColoresApp.fondo),
+                      'Agregar mototaxi',
+                      style: GoogleFonts.inter(
+                        fontSize: TamanoLetra.textoNormal,
+                        color: ColoresApp.fondo,
+                      ),
                     ),
                   ),
                 ),
@@ -87,30 +105,34 @@ class NuevoMototaxi extends StatelessWidget {
   }
 
   InputDecoration _estiloInput(String label, IconData icono) {
-  return InputDecoration(
-    prefixIcon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
-    labelText: label.isNotEmpty ? label : null,
-    labelStyle: GoogleFonts.inter(
-      fontSize: TamanoLetra.textoNormal,
-      color: ColoresApp.textoMedio,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
-    ),
-    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-  );
-}
+    return InputDecoration(
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.grande,
+      ),
+      labelText: label.isNotEmpty ? label : null,
+      labelStyle: GoogleFonts.inter(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+      ),
+      contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+    );
+  }
 }
