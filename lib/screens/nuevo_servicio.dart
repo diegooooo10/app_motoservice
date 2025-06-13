@@ -4,6 +4,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NuevoServicio extends StatelessWidget {
@@ -253,35 +254,9 @@ class NuevoServicio extends StatelessWidget {
     );
   }
 
-  InputDecoration _estiloInput(String label, IconData icono) {
-  return InputDecoration(
-    prefixIcon: Icon(icono, color: ColoresApp.primario, size: TamanoIcono.grande),
-    labelText: label.isNotEmpty ? label : null,
-    labelStyle: GoogleFonts.inter(
-      fontSize: TamanoLetra.textoNormal,
-      color: ColoresApp.textoMedio,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
-    ),
-    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-  );
 }
 
-
+class FirestoreService {
   Future<bool> _placaRegistrada(String placa) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('mototaxis')
