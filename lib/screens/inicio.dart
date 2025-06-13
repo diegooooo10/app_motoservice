@@ -7,6 +7,7 @@ import 'package:app_motoservice/theme/typography.dart';
 import 'package:app_motoservice/widgets/mototaxi_tarjeta_inicio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app_motoservice/screens/historial.dart';
 
 class Mototaxis extends StatefulWidget {
   const Mototaxis({super.key});
@@ -82,8 +83,7 @@ class _MototaxisState extends State<Mototaxis> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EjemploHistorial()),
+                context, MaterialPageRoute(builder: (context) => const HistorialPage()),
               );
             },
             icon: SizedBox(
