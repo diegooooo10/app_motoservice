@@ -5,7 +5,8 @@ import 'package:app_motoservice/theme/iconos.dart';
 import 'package:flutter/material.dart';
 
 class BarraNavegacion extends StatefulWidget {
-  const BarraNavegacion({super.key});
+  final int selectedIndex;
+  const BarraNavegacion({super.key, this.selectedIndex = 0});
 
   @override
   State<BarraNavegacion> createState() => _MainNavigatorState();
@@ -13,14 +14,25 @@ class BarraNavegacion extends StatefulWidget {
 
 class _MainNavigatorState extends State<BarraNavegacion> {
   int _selectedIndex = 0;
-  static final List<Widget> _pages = <Widget>[Mototaxis(), FormularioScreen()];
+  Widget _getPage(int index) {
+    if (index == 0) return Mototaxis();
+    if (index == 1) return FormularioScreen();
+    return SizedBox();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: _getPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: ColoresApp.fondo,
-        elevation: 5,
+        elevation: 4,
         currentIndex: _selectedIndex,
         selectedItemColor: ColoresApp.primario,
         unselectedItemColor: ColoresApp.gris,
@@ -41,15 +53,5 @@ class _MainNavigatorState extends State<BarraNavegacion> {
         },
       ),
     );
-  }
-}
-
-
-class Ejemplo extends StatelessWidget {
-  const Ejemplo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

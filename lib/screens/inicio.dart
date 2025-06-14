@@ -1,5 +1,6 @@
 // import 'package:app_motoservice/services/firebase_service.dart';
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
+import 'package:app_motoservice/screens/historial.dart';
 import 'package:app_motoservice/services/firebase_service.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
@@ -85,7 +86,7 @@ class _MototaxisState extends State<Mototaxis> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EjemploHistorial()),
+                MaterialPageRoute(builder: (context) => HistorialPage()),
               );
             },
             icon: SizedBox(
@@ -172,14 +173,5 @@ class _MototaxisState extends State<Mototaxis> {
         ],
       ),
     );
-  }
-}
-
-class EjemploHistorial extends StatelessWidget {
-  const EjemploHistorial({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
