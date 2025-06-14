@@ -20,7 +20,7 @@ class MototaxiTarjetaInicio extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EjemploDescripcion()),
+            MaterialPageRoute(builder: (context) => Placeholder()),
           );
         },
         child: Padding(
@@ -96,14 +96,5 @@ class MototaxiTarjetaInicio extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class EjemploDescripcion extends StatelessWidget {
-  const EjemploDescripcion({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
