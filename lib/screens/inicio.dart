@@ -8,7 +8,6 @@ import 'package:app_motoservice/theme/typography.dart';
 import 'package:app_motoservice/widgets/mototaxi_tarjeta_inicio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:app_motoservice/screens/historial.dart';
 
 class Mototaxis extends StatefulWidget {
   const Mototaxis({super.key});
