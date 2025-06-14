@@ -38,7 +38,7 @@ final List<Map<String, dynamic>> users = [
     "servicios": [],
   },
   {
-    "nombre": "Carlos Jiménez",
+    "nombre": "Oswaldo Jiménez",
     "placa": "MXT-889",
     "numero": "9876543210",
     "servicios": [

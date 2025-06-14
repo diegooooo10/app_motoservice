@@ -1,4 +1,5 @@
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
+import 'package:app_motoservice/screens/detalle_mototaxi.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
@@ -20,7 +21,9 @@ class MototaxiTarjetaInicio extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EjemploDescripcion()),
+            MaterialPageRoute(
+              builder: (context) => DetalleMototaxiScreen(mototaxi: mototaxi )
+              ),
           );
         },
         child: Padding(
@@ -96,14 +99,5 @@ class MototaxiTarjetaInicio extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class EjemploDescripcion extends StatelessWidget {
-  const EjemploDescripcion({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
