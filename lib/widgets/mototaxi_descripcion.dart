@@ -150,10 +150,7 @@ class MototaxiDescripcion extends StatelessWidget {
                         },
                       );
                     },
-                    style: TextButton.styleFrom(
-                      foregroundColor: ColoresApp.azulClaro,
-                    ),
-                    child: const Text('Editar'),
+                    child: Text('Editar', style: GoogleFonts.inter(color: ColoresApp.primario),),
                   ),
                   TextButton(
                     onPressed: () {

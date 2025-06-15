@@ -15,8 +15,6 @@ class ColoresApp {
   static const Color fondoTarjeta = Color(0xFFFFFFFF);
 
   static const Color gris = Color(0xFF6B7280);
-  static const Color azulClaro = Color(0xFF2196F3);
-  static const Color rojo = Color(0xFFBA0000);
   static const Color divisor = Color(0xFFF4F4F4);
 }
 

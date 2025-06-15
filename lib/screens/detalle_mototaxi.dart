@@ -177,11 +177,11 @@ class DetalleMototaxiScreen extends StatelessWidget {
                       (route) => false,
                     );
                   },
-                  icon: const Icon(Icons.add_circle_outline_outlined, color: ColoresApp.azulClaro),
+                  icon: const Icon(Icons.add_circle_outline_outlined, color: ColoresApp.primario),
                   label: Text(
                     'Agregar servicio',
                     style: GoogleFonts.montserrat(
-                      color: ColoresApp.azulClaro,
+                      color: ColoresApp.primario,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
