@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/typography.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
 
@@ -11,27 +12,27 @@ void mostrarModalEditarServicio({
   required Servicio servicio,
   required void Function(Servicio nuevoServicio) onGuardar,
 }) {
-  final _formKey = GlobalKey<FormBuilderState>();
+  final formKey = GlobalKey<FormBuilderState>();
 
   final List<String> serviciosDisponibles = [
-      'Mantenimiento',
-      'Electrica',
-      'Cambio de llantas',
-      'Revisión y ajuste de frenos',
-      'Cambio de aceite',
-      'Lavado y estética',
-      'Lubricación de cadena',
+    'Mantenimiento',
+    'Electrica',
+    'Cambio de llantas',
+    'Revisión y ajuste de frenos',
+    'Cambio de aceite',
+    'Lavado y estética',
+    'Lubricación de cadena',
   ];
 
   final List<String> zonasDisponibles = [
-      'Selene',
-      'Las Arboledas',
-      'El triángulo',
-      'San Francisco Tlaltenco',
-      'Ojo de Agua',
-      'San Miguel (Tláhuac)',
-      'Quiahutla',
-      'La Ciénega',
+    'Selene',
+    'Las Arboledas',
+    'El triángulo',
+    'San Francisco Tlaltenco',
+    'Ojo de Agua',
+    'San Miguel (Tláhuac)',
+    'Quiahutla',
+    'La Ciénega',
   ];
 
   showDialog(
@@ -48,7 +49,7 @@ void mostrarModalEditarServicio({
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: FormBuilder(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,6 +70,9 @@ void mostrarModalEditarServicio({
                     items: serviciosDisponibles
                         .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                         .toList(),
+                    validator: FormBuilderValidators.required(
+                      errorText: 'Seleccione un servicio',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   FormBuilderDropdown<String>(
@@ -78,13 +82,22 @@ void mostrarModalEditarServicio({
                     items: zonasDisponibles
                         .map((z) => DropdownMenuItem(value: z, child: Text(z)))
                         .toList(),
+                    validator: FormBuilderValidators.required(
+                      errorText: 'Seleccione una zona',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   FormBuilderTextField(
                     name: 'comentarios',
                     initialValue: '',
                     maxLines: 3,
-                    decoration: _estiloInput('Comentarios', Icons.comment),
+                    decoration: _estiloInput('Comentarios ', Icons.comment),
+                    validator: (value) {
+                      if (value != null && value.length > 150) {
+                        return 'Máximo 150 caracteres';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -97,8 +110,8 @@ void mostrarModalEditarServicio({
                       const SizedBox(width: 8),
                       ElevatedButton.icon(
                         onPressed: () {
-                          if (_formKey.currentState!.saveAndValidate()) {
-                            final data = _formKey.currentState!.value;
+                          if (formKey.currentState!.saveAndValidate()) {
+                            final data = formKey.currentState!.value;
                             final nuevoServicio = Servicio(
                               fecha: servicio.fecha,
                               servicio: data['servicio'],

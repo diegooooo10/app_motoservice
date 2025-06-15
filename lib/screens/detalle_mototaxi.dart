@@ -1,4 +1,4 @@
-import 'package:app_motoservice/screens/nuevo_servicio.dart';
+import 'package:app_motoservice/screens/barra_navegacion.dart';
 import 'package:app_motoservice/screens/pantallamodular.dart';
 import 'package:app_motoservice/screens/pantallamodularservicio.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class DetalleMototaxiScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColoresApp.fondo,
+      backgroundColor: ColoresApp.fondoTarjeta,
       appBar: AppBar(
         title: Text(
           'Detalles',
@@ -34,13 +34,6 @@ class DetalleMototaxiScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Mototaxista',
-              style: GoogleFonts.montserrat(
-                fontSize: TamanoLetra.tituloGrande,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
             const SizedBox(height: 10),
             Card(
               shape: RoundedRectangleBorder(
@@ -95,7 +88,7 @@ class DetalleMototaxiScreen extends StatelessWidget {
                           },
                         );
                       },
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon: const Icon(Icons.delete, color: ColoresApp.error),
                       tooltip: 'Eliminar Mototaxi',
                     ),
                   ],
@@ -103,7 +96,6 @@ class DetalleMototaxiScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -116,9 +108,12 @@ class DetalleMototaxiScreen extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => NuevoServicio()),
+                      MaterialPageRoute(
+                        builder: (context) => BarraNavegacion(selectedIndex: 1),
+                      ),
+                      (route) => false,
                     );
                   },
                   icon: const Icon(Icons.add, color: ColoresApp.azulClaro),
@@ -133,140 +128,161 @@ class DetalleMototaxiScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-
             Expanded(
-              child:
-                  mototaxi.servicios.isEmpty
-                      ? Center(
-                        child: Text(
-                          'No hay servicios registrados.',
-                          style: GoogleFonts.inter(
-                            fontSize: TamanoLetra.textoNormal,
-                            color: ColoresApp.textoMedio,
-                          ),
+              child: mototaxi.servicios.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No hay servicios registrados.',
+                        style: GoogleFonts.inter(
+                          fontSize: TamanoLetra.textoNormal,
+                          color: ColoresApp.textoMedio,
                         ),
-                      )
-                      : ListView.builder(
-                        itemCount: mototaxi.servicios.length,
-                        itemBuilder: (context, index) {
-                          final servicio = mototaxi.servicios[index];
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            margin: const EdgeInsets.symmetric(vertical: 6),
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          _getServiceIcon(servicio.servicio),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            servicio.servicio,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: TamanoLetra.textoNormal,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        servicio.fecha,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          color: ColoresApp.textoMedio,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    servicio.detalles,
-                                    style: GoogleFonts.inter(fontSize: 13),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.hourglass_bottom,
-                                        size: 16,
-                                        color: ColoresApp.gris,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Pendiente',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      TextButton(
-                                        onPressed: () {
-                                          mostrarModalEditarServicio(
-                                            context: context,
-                                            servicio: mototaxi.servicios[index],
-                                            onGuardar: (nuevoServicio) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    "Servicio editado",
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: const Text('Editar'),
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: ColoresApp.azulClaro,
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          mostrarDialogoConfirmacion(
-                                            context: context,
-                                            titulo:
-                                                "¿Estas seguro que deseas eliminar este servicio?",
-                                            mensaje:
-                                                'Escribe "eliminar" para confirmar la eliminacion',
-                                            palabraClave: 'eliminar',
-                                            onConfirmar: () {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    "Servicio eliminado",
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: const Text('Eliminar'),
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
                       ),
+                    )
+                  : ListView.builder(
+                      itemCount: mototaxi.servicios.length,
+                      itemBuilder: (context, index) {
+                        final servicio = mototaxi.servicios[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          elevation: 2,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  width: 5,
+                                  decoration: BoxDecoration(
+                                    color: ColoresApp.azulClaro,
+                                    borderRadius : BorderRadius.circular(12),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                _getServiceIcon(
+                                                    servicio.servicio),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  servicio.servicio,
+                                                  style:
+                                                      GoogleFonts.montserrat(
+                                                    fontSize: TamanoLetra
+                                                        .textoNormal,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              servicio.fecha,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 12,
+                                                color: ColoresApp.textoMedio,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          servicio.detalles,
+                                          style: GoogleFonts.inter(
+                                              fontSize: 13),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.hourglass_bottom,
+                                              size: 16,
+                                              color: ColoresApp.gris,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Pendiente',
+                                              style: GoogleFonts.inter(
+                                                fontSize: 12,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            TextButton(
+                                              onPressed: () {
+                                                mostrarModalEditarServicio(
+                                                  context: context,
+                                                  servicio: mototaxi
+                                                      .servicios[index],
+                                                  onGuardar: (nuevoServicio) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          "Servicio editado",
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              style: TextButton.styleFrom(
+                                                foregroundColor:
+                                                    ColoresApp.azulClaro,
+                                              ),
+                                              child: const Text('Editar'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                mostrarDialogoConfirmacion(
+                                                  context: context,
+                                                  titulo:
+                                                      "¿Estas seguro que deseas eliminar este servicio?",
+                                                  mensaje:
+                                                      'Escribe "eliminar" para confirmar la eliminacion',
+                                                  palabraClave: 'eliminar',
+                                                  onConfirmar: () {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          "Servicio eliminado",
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: Colors.red,
+                                              ),
+                                              child: const Text('Eliminar'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -276,12 +292,6 @@ class DetalleMototaxiScreen extends StatelessWidget {
 
   Widget _getServiceIcon(String tipo) {
     switch (tipo.toLowerCase()) {
-      case 'cambio de aceite':
-        return const Icon(Icons.oil_barrel, color: ColoresApp.primario);
-      case 'eléctrica':
-        return const Icon(Icons.electric_bolt, color: ColoresApp.primario);
-      case 'cambio de llantas':
-        return const Icon(Icons.tire_repair, color: ColoresApp.primario);
       default:
         return const Icon(
           Icons.build_circle_outlined,
