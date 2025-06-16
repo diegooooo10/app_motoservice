@@ -107,7 +107,10 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: ColoresApp.textoOscuro),
                       foregroundColor: ColoresApp.textoOscuro,
-                      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 20,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -121,13 +124,14 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                         final data = formKey.currentState!.value;
                         // ignore: unused_local_variable
                         final nuevoServicio = Servicio(
-                          fecha: DateTime.now().toUtc().toIso8601String(),
+                          fecha: DateTime.now().toUtc(),
                           servicio: data['servicio'],
                           detalles:
                               data['zona'] +
                               (data['comentarios']?.isNotEmpty == true
                                   ? ' - ${data['comentarios']}'
                                   : ''),
+                          zona: '',
                         );
                         Navigator.pop(context);
                       }
@@ -137,7 +141,10 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColoresApp.primario,
                       foregroundColor: ColoresApp.fondo,
-                      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 20,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

@@ -17,29 +17,13 @@ class Mototaxis extends StatefulWidget {
 }
 
 class _MototaxisState extends State<Mototaxis> {
-
-  
   final TextEditingController _controller = TextEditingController();
-
-  List<Mototaxi> _allData = [];
-  List<Mototaxi> _filteredData = [];
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-    _controller.addListener(_filterList);
-  }
-
-  void _filterList() {
-    final q = _controller.text.toLowerCase();
-    setState(() {
-      _filteredData =
-          _allData.where((item) {
-            return item.placa.toLowerCase().contains(q) ||
-                item.nombre.toLowerCase().contains(q);
-          }).toList();
+    _controller.addListener(() {
+      setState(() {});
     });
   }
 
@@ -47,25 +31,6 @@ class _MototaxisState extends State<Mototaxis> {
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final data = _allData = await FirebaseService.getMockData();
-      if (mounted) {
-        setState(() {
-          _allData = data;
-          _filteredData = data;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error cargando datos: $e');
-    }
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   @override
@@ -87,8 +52,6 @@ class _MototaxisState extends State<Mototaxis> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const HistorialPage()),
-
-
               );
             },
             icon: SizedBox(
@@ -101,9 +64,9 @@ class _MototaxisState extends State<Mototaxis> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1), 
-                      offset: Offset(0, 4), 
-                      blurRadius: 12, 
+                      color: Colors.black.withValues(alpha: 0.1),
+                      offset: Offset(0, 4),
+                      blurRadius: 12,
                       spreadRadius: 1,
                     ),
                   ],
@@ -159,18 +122,39 @@ class _MototaxisState extends State<Mototaxis> {
           ),
           SizedBox(height: 10),
           Expanded(
-            child:
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _filteredData.isEmpty
-                    ? const Center(child: Text('No se encontraron resultados'))
-                    : ListView.builder(
-                      itemCount: _filteredData.length,
-                      itemBuilder: (context, index) {
-                        final item = _filteredData[index];
-                        return MototaxiTarjetaInicio(mototaxi: item);
-                      },
-                    ),
+            child: StreamBuilder<List<Mototaxi>>(
+              stream: FirebaseService.getMototaxisStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('No se encontraron resultados'),
+                  );
+                }
+
+                final datosFiltrados =
+                    snapshot.data!.where((item) {
+                      final q = _controller.text.toLowerCase();
+                      return item.placa.toLowerCase().contains(q) ||
+                          item.nombre.toLowerCase().contains(q);
+                    }).toList();
+                if (datosFiltrados.isEmpty) {
+                  return const Center(
+                    child: Text('No se encontraron resultados'),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: datosFiltrados.length,
+                  itemBuilder: (context, index) {
+                    final mototaxi = datosFiltrados[index];
+                    return MototaxiTarjetaInicio(mototaxi: mototaxi);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

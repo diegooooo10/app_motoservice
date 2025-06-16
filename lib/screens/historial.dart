@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app_motoservice/models/historial_modelo.dart';
-import 'package:app_motoservice/models/mototaxis_modelo.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
@@ -21,26 +20,6 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   void initState() {
     super.initState();
-    cargarHistorial();
-  }
-
-  void cargarHistorial() {
-    final List<HistorialModelo> temp = [];
-    for (var mototaxi in mototaxis) {
-      for (var servicio in mototaxi.servicios) {
-        temp.add(
-          HistorialModelo(
-            servicio: servicio,
-            nombre: mototaxi.nombre,
-            placa: mototaxi.placa,
-          ),
-        );
-      }
-    }
-    setState(() {
-      historialCompleto = temp;
-      historialFiltrado = List.from(historialCompleto);
-    });
   }
 
   void filtrarHistorial(String query) {
@@ -95,7 +74,7 @@ class _HistorialPageState extends State<HistorialPage> {
                   color: ColoresApp.primario,
                   fontStyle: FontStyle.italic,
                 ),
-                prefixIcon:  Icon(Icons.search, size: TamanoIcono.mediano),
+                prefixIcon: Icon(Icons.search, size: TamanoIcono.mediano),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 14,
@@ -188,7 +167,7 @@ class _HistorialPageState extends State<HistorialPage> {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      item.servicio.fecha,
+                                      'item.servicio.fecha',
                                       style: GoogleFonts.inter(
                                         fontSize: TamanoLetra.textoPequeno,
                                         color: Colors.grey,
