@@ -196,4 +196,3 @@ List<Mototaxi> mototaxis = users.map((u) => Mototaxi.fromMap(u)).toList();
 //     );
 //   }
 // }
-

@@ -6,14 +6,10 @@ import 'nuevo_mototaxi.dart';
 import 'nuevo_servicio.dart';
 
 class FormularioScreen extends StatefulWidget {
-  final int initialTab;
+  final int? initialTab;
   final String? mototaxiPlaca;
 
-  const FormularioScreen({
-    super.key,
-    this.initialTab = 0,
-    this.mototaxiPlaca,
-  });
+  const FormularioScreen({super.key, this.initialTab, this.mototaxiPlaca});
 
   @override
   State<FormularioScreen> createState() => _FormularioScreenState();
@@ -29,7 +25,7 @@ class _FormularioScreenState extends State<FormularioScreen>
     _tabController = TabController(
       length: 2,
       vsync: this,
-      initialIndex: widget.initialTab,
+      initialIndex: widget.initialTab ?? 0,
     );
   }
 
@@ -41,35 +37,42 @@ class _FormularioScreenState extends State<FormularioScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Theme.of(context).appBarTheme.backgroundColor,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              const SizedBox(height: kToolbarHeight / 2),
-              Text(
-                'Formulario',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
-                  color: ColoresApp.textoOscuro,
-                  fontSize: TamanoLetra.tituloGrande,
-                ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: ColoresApp.fondo,
+        appBar: AppBar(
+          title: Text(
+            'Formulario',
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.bold,
+              color: ColoresApp.textoOscuro,
+              fontSize: TamanoLetra.tituloGrande,
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight + 24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8,
               ),
-              const SizedBox(height: 8),
-              Container(
+              child: Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFE9E9E9),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 child: TabBar(
                   controller: _tabController,
                   labelColor: ColoresApp.primario,
                   unselectedLabelColor: ColoresApp.textoOscuro,
                   indicator: BoxDecoration(
                     color: ColoresApp.fondo,
+
                     borderRadius: BorderRadius.circular(30),
                   ),
                   dividerColor: Colors.transparent,
@@ -84,20 +87,17 @@ class _FormularioScreenState extends State<FormularioScreen>
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
-            ],
+            ),
           ),
         ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              NuevoMototaxi(),
-              NuevoServicio(mototaxiPlaca: widget.mototaxiPlaca),
-            ],
-          ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            const NuevoMototaxi(),
+            NuevoServicio(mototaxiPlaca: widget.mototaxiPlaca),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

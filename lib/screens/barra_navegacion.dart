@@ -1,19 +1,17 @@
 import 'package:app_motoservice/screens/inicio.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'formulario_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:app_motoservice/theme/typography.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:flutter/material.dart';
 
 class BarraNavegacion extends StatefulWidget {
-  final int selectedIndex;
+  final int? selectedIndex;
   final int? formularioInitialTab;
   final String? mototaxiPlaca;
 
   const BarraNavegacion({
-    super.key, 
-    this.selectedIndex = 0,
+    super.key,
+    this.selectedIndex,
     this.formularioInitialTab,
     this.mototaxiPlaca,
   });
@@ -23,43 +21,32 @@ class BarraNavegacion extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<BarraNavegacion> {
-  int _selectedIndex = 0;
-  int? _formularioInitialTab;
-  String? _mototaxiPlaca;
-
-  String _getAppBarTitle(int index) {
-    if (index == 0) return 'Inicio';
-    if (index == 1) return 'Formulario';
-    return 'MotoService';
-  }
+  late int _selectedIndex;
+  late int _formularioInitialTab;
+  late String? _mototaxiPlaca;
 
   Widget _getPage(int index) {
     if (index == 0) return Mototaxis();
-    if (index == 1) return FormularioScreen( initialTab: _formularioInitialTab ?? 0, mototaxiPlaca: _mototaxiPlaca,);
-    return SizedBox();
+    if (index == 1) {
+      return FormularioScreen(
+        initialTab: _formularioInitialTab,
+        mototaxiPlaca: _mototaxiPlaca,
+      );
+    }
+    return Mototaxis();
   }
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.selectedIndex;
-    _formularioInitialTab = widget.formularioInitialTab;
-    _mototaxiPlaca = widget.mototaxiPlaca;
+    _selectedIndex = widget.selectedIndex ?? 0;
+    _mototaxiPlaca = widget.mototaxiPlaca ?? '';
+    _formularioInitialTab = widget.formularioInitialTab ?? 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _getAppBarTitle(_selectedIndex),
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.bold,
-            color: ColoresApp.textoOscuro,
-            fontSize: TamanoLetra.tituloGrande,
-          ),
-        ),
-      ),
       body: _getPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: ColoresApp.fondo,
@@ -80,8 +67,7 @@ class _MainNavigatorState extends State<BarraNavegacion> {
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
-            if (index != 1) {
-              _formularioInitialTab = null;
+            if (index == 1) {
               _mototaxiPlaca = null;
             }
           });

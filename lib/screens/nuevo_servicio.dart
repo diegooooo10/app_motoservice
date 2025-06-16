@@ -4,7 +4,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NuevoServicio extends StatelessWidget {
@@ -254,18 +253,5 @@ class NuevoServicio extends StatelessWidget {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
-  }
-}
-
-class FirestoreService {
-  Future<bool> _placaRegistrada(String placa) async {
-    final snapshot =
-        await FirebaseFirestore.instance
-            .collection('mototaxis')
-            .where('placa', isEqualTo: placa)
-            .limit(1)
-            .get();
-
-    return snapshot.docs.isNotEmpty;
   }
 }
