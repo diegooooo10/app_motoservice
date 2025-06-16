@@ -46,14 +46,21 @@ class NuevoServicio extends StatelessWidget {
             key: formKey,
             child: Column(
               children: [
-                FormBuilderTextField(
+                FormBuilderDropdown(
                   name: 'placa',
+                  hint: Text('Elige un mototaxi'),
                   initialValue: mototaxiPlaca,
-                  readOnly: mototaxiPlaca != null,
-                  maxLength: 6,
+                  items: [],
                   decoration: _estiloInput('Placa', Icons.article_outlined),
                   validator: FormBuilderValidators.required(
                     errorText: 'La placa es obligatoria',
+                  ),
+                  dropdownColor: ColoresApp.fondoTarjeta,
+                  isExpanded: true,
+                  style: GoogleFonts.montserrat(
+                    color: ColoresApp.textoOscuro,
+                    fontSize: TamanoLetra.textoPequeno,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 12),

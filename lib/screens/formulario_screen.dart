@@ -2,8 +2,8 @@ import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'nuevo_mototaxi.dart';
-import 'nuevo_servicio.dart';
+import '../widgets/nuevo_mototaxi.dart';
+import '../widgets/nuevo_servicio.dart';
 
 class FormularioScreen extends StatefulWidget {
   final int? initialTab;

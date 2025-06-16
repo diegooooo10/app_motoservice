@@ -68,7 +68,7 @@ class MototaxiDescripcion extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    servicio.fecha,
+                    'servicio.fecha',
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       color: ColoresApp.textoMedio,
@@ -150,7 +150,10 @@ class MototaxiDescripcion extends StatelessWidget {
                         },
                       );
                     },
-                    child: Text('Editar', style: GoogleFonts.inter(color: ColoresApp.primario),),
+                    child: Text(
+                      'Editar',
+                      style: GoogleFonts.inter(color: ColoresApp.primario),
+                    ),
                   ),
                   TextButton(
                     onPressed: () {

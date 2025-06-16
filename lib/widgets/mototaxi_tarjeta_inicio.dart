@@ -21,7 +21,9 @@ class MototaxiTarjetaInicio extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => DetalleMototaxiScreen(mototaxi: mototaxi,)),
+            MaterialPageRoute(
+              builder: (context) => DetalleMototaxiScreen(mototaxi: mototaxi),
+            ),
           );
         },
         child: Padding(
