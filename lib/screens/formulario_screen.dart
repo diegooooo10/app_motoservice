@@ -5,8 +5,39 @@ import 'package:google_fonts/google_fonts.dart';
 import 'nuevo_mototaxi.dart';
 import 'nuevo_servicio.dart';
 
-class FormularioScreen extends StatelessWidget {
-  const FormularioScreen({super.key});
+class FormularioScreen extends StatefulWidget {
+  final int? initialTab;
+  final String? mototaxiPlaca;
+
+  const FormularioScreen({
+    super.key,
+    this.initialTab,
+    this.mototaxiPlaca,
+  });
+
+  @override
+  State<FormularioScreen> createState() => _FormularioScreenState();
+}
+
+class _FormularioScreenState extends State<FormularioScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTab ?? 0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +68,7 @@ class FormularioScreen extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: TabBar(
+                  controller: _tabController,
                   labelColor: ColoresApp.primario,
                   unselectedLabelColor: ColoresApp.textoOscuro,
                   indicator: BoxDecoration(
@@ -59,8 +91,14 @@ class FormularioScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: const TabBarView(children: [NuevoMototaxi(), NuevoServicio()]),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            const NuevoMototaxi(),
+            NuevoServicio(mototaxiPlaca: widget.mototaxiPlaca),
+          ],
+        ),
       ),
     );
   }
-}
+    }

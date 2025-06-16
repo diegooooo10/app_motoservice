@@ -69,85 +69,83 @@ class DetalleMototaxiScreen extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  backgroundColor: ColoresApp.fondoTarjeta,
-                                  title: Text(
-                                    'Eliminar mototaxi',
-                                    style: GoogleFonts.inter(
-                                      fontSize: TamanoLetra.titulo,
-                                    ),
-                                  ),
-                                  content: Text(
-                                    '¿Estás seguro que quieres eliminar este mototaxi? Esta acción no se puede deshacer.',
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: ColoresApp.fondoTarjeta,
+                              title: Text(
+                                'Eliminar mototaxi',
+                                style: GoogleFonts.inter(
+                                  fontSize: TamanoLetra.titulo,
+                                ),
+                              ),
+                              content: Text(
+                                '¿Estás seguro que quieres eliminar este mototaxi? Esta acción no se puede deshacer.',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: TamanoLetra.textoPequeno,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  child: Text(
+                                    'Cancelar',
                                     style: GoogleFonts.montserrat(
                                       fontSize: TamanoLetra.textoPequeno,
                                     ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed:
-                                          () =>
-                                              Navigator.of(context).pop(false),
-                                      child: Text(
-                                        'Cancelar',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: TamanoLetra.textoPequeno,
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    if (!context.mounted) return;
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Eliminado correctamente',
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        duration: Duration(seconds: 3),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
+                                    );
 
+                                    if (!context.mounted) return;
 
-                                        if (!context.mounted) return;
-
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Eliminado correctamente'),
-                                            backgroundColor: Colors.green,
-                                            duration: Duration(seconds: 3),
-                                            behavior: SnackBarBehavior.floating,
-                                            margin: EdgeInsets.all(16),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+                                    Navigator.of(context).pop(true);
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => BarraNavegacion(
+                                              selectedIndex: 0,
                                             ),
-                                          ),
-                                        );
-
-                                        if (!context.mounted) return;
-
-                                        Navigator.of(context).pop(true);
-                                        Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) => BarraNavegacion(
-                                                  selectedIndex: 0,
-                                                ),
-                                          ),
-                                          (route) => false,
-                                        );
-                                      },
-
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.red,
                                       ),
-                                      child: Text(
-                                        'Eliminar',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: TamanoLetra.textoPequeno,
-                                        ),
-                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ColoresApp.error,
+                                  ),
+                                  child: Text(
+                                    'Eliminar',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: TamanoLetra.textoPequeno,
                                     ),
-                                  ],
-                                );
-                              },
+                                  ),
+                                ),
+                              ],
                             );
+                          },
+                        );
                       },
                       icon: const Icon(Icons.delete, color: ColoresApp.error),
                       tooltip: 'Eliminar Mototaxi',
@@ -172,12 +170,20 @@ class DetalleMototaxiScreen extends StatelessWidget {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BarraNavegacion(selectedIndex: 1),
+                        builder:
+                            (context) => BarraNavegacion(
+                              selectedIndex: 1,
+                              formularioInitialTab: 1,
+                              mototaxiPlaca: mototaxi.placa,
+                            ),
                       ),
                       (route) => false,
                     );
                   },
-                  icon: const Icon(Icons.add_circle_outline_outlined, color: ColoresApp.primario),
+                  icon: const Icon(
+                    Icons.add_circle_outline_outlined,
+                    color: ColoresApp.primario,
+                  ),
                   label: Text(
                     'Agregar servicio',
                     style: GoogleFonts.montserrat(
