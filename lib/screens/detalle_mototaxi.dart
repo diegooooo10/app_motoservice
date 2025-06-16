@@ -1,4 +1,5 @@
 import 'package:app_motoservice/screens/barra_navegacion.dart';
+import 'package:app_motoservice/screens/formulario_screen.dart';
 import 'package:app_motoservice/widgets/mototaxi_descripcion.dart';
 import 'package:flutter/material.dart';
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
@@ -127,7 +128,7 @@ class DetalleMototaxiScreen extends StatelessWidget {
                                           MaterialPageRoute(
                                             builder:
                                                 (_) => BarraNavegacion(
-                                                  selectedIndex: 0,
+                                                 selectedIndex: 1,
                                                 ),
                                           ),
                                           (route) => false,
@@ -172,7 +173,11 @@ class DetalleMototaxiScreen extends StatelessWidget {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BarraNavegacion(selectedIndex: 1),
+                        builder: (context) => BarraNavegacion(
+                          selectedIndex: 1,
+                          formularioInitialTab: 1,
+                          mototaxiPlaca: mototaxi.placa,
+                          ),
                       ),
                       (route) => false,
                     );

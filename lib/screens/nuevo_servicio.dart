@@ -8,13 +8,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NuevoServicio extends StatelessWidget {
-  const NuevoServicio({super.key});
+  final String? mototaxiPlaca;
+  const NuevoServicio({super.key, this.mototaxiPlaca});
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormBuilderState>();
-      AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
-
+    AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
 
     final servicios = [
       'Mantenimiento',
@@ -49,6 +49,8 @@ class NuevoServicio extends StatelessWidget {
               children: [
                 FormBuilderTextField(
                   name: 'placa',
+                  initialValue: mototaxiPlaca,
+                  readOnly: mototaxiPlaca != null,
                   maxLength: 6,
                   decoration: _estiloInput('Placa', Icons.article_outlined),
                   validator: FormBuilderValidators.required(
@@ -232,11 +234,11 @@ class NuevoServicio extends StatelessWidget {
       fillColor: ColoresApp.fondoTarjeta,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: ColoresApp.gris,width: 1.2),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: ColoresApp.error,width: 1.2),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -244,7 +246,7 @@ class NuevoServicio extends StatelessWidget {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: ColoresApp.gris,width: 1.2),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -253,16 +255,16 @@ class NuevoServicio extends StatelessWidget {
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
-
 }
 
 class FirestoreService {
   Future<bool> _placaRegistrada(String placa) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('mototaxis')
-        .where('placa', isEqualTo: placa)
-        .limit(1)
-        .get();
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('mototaxis')
+            .where('placa', isEqualTo: placa)
+            .limit(1)
+            .get();
 
     return snapshot.docs.isNotEmpty;
   }
