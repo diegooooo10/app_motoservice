@@ -9,11 +9,7 @@ class FormularioScreen extends StatefulWidget {
   final int? initialTab;
   final String? mototaxiPlaca;
 
-  const FormularioScreen({
-    super.key,
-    this.initialTab,
-    this.mototaxiPlaca,
-  });
+  const FormularioScreen({super.key, this.initialTab, this.mototaxiPlaca});
 
   @override
   State<FormularioScreen> createState() => _FormularioScreenState();
@@ -66,7 +62,10 @@ class _FormularioScreenState extends State<FormularioScreen>
                   color: const Color(0xFFE9E9E9),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 child: TabBar(
                   controller: _tabController,
                   labelColor: ColoresApp.primario,
@@ -101,4 +100,4 @@ class _FormularioScreenState extends State<FormularioScreen>
       ),
     );
   }
-    }
+}
