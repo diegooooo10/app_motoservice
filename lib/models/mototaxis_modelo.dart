@@ -1,7 +1,7 @@
 final List<Map<String, dynamic>> users = [
   {
     "nombre": "Juan Carlos Ramírez",
-    "placa": "MTX-789",
+    "placa": "MTX789",
     "numero": "5551236789",
     "servicios": [
       {
@@ -33,13 +33,13 @@ final List<Map<String, dynamic>> users = [
   },
   {
     "nombre": "Luis Méndez",
-    "placa": "MTX-457",
+    "placa": "MTX457",
     "numero": "3216549870",
     "servicios": [],
   },
   {
-    "nombre": "Carlos Jiménez",
-    "placa": "MXT-889",
+    "nombre": "Oswaldo Jiménez",
+    "placa": "MXT889",
     "numero": "9876543210",
     "servicios": [
       {
@@ -66,7 +66,7 @@ final List<Map<String, dynamic>> users = [
   },
   {
     "nombre": "Mario Torres",
-    "placa": "MTX-342",
+    "placa": "MTX342",
     "numero": "4449873210",
     "servicios": [
       {
