@@ -6,6 +6,7 @@ import 'package:app_motoservice/theme/typography.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
+import 'package:app_motoservice/services/firebase_service.dart';
 
 class ActualizarServicio extends StatefulWidget {
   final Mototaxi mototaxi;
@@ -22,8 +23,13 @@ class ActualizarServicio extends StatefulWidget {
 
 class _ActualizarServicioState extends State<ActualizarServicio> {
   AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
-
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +56,10 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
 
     return Padding(
       padding: const EdgeInsets.all(20),
-
       child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: FormBuilder(
           autovalidateMode: autoValidateMode,
-
           key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -63,13 +67,11 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
             children: [
               FormBuilderDropdown<String>(
                 name: 'servicio',
-                hint: Text('Tipo de servicio'),
-
+                hint: const Text('Tipo de servicio'),
                 decoration: _estiloDropDown(Icons.build, 'Servicio'),
-                items:
-                    serviciosDisponibles
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                        .toList(),
+                items: serviciosDisponibles
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
                 validator: FormBuilderValidators.required(
                   errorText: 'Seleccione un servicio',
                 ),
@@ -77,12 +79,11 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
               const SizedBox(height: 12),
               FormBuilderDropdown<String>(
                 name: 'zona',
-                hint: Text('Zona de servicio'),
+                hint: const Text('Zona de servicio'),
                 decoration: _estiloDropDown(Icons.location_on, 'Zona'),
-                items:
-                    zonasDisponibles
-                        .map((z) => DropdownMenuItem(value: z, child: Text(z)))
-                        .toList(),
+                items: zonasDisponibles
+                    .map((z) => DropdownMenuItem(value: z, child: Text(z)))
+                    .toList(),
                 validator: FormBuilderValidators.required(
                   errorText: 'Seleccione una zona',
                 ),
@@ -93,7 +94,7 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                 initialValue: '',
                 maxLines: 3,
                 maxLength: 150,
-                decoration: _estiloInput('Comentarios ', Icons.comment),
+                decoration: _estiloInput('Comentarios', Icons.comment),
                 validator: FormBuilderValidators.required(
                   errorText: 'El comentario es obligatorio',
                 ),
@@ -107,7 +108,7 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: ColoresApp.textoOscuro),
                       foregroundColor: ColoresApp.textoOscuro,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: 14,
                         horizontal: 20,
                       ),
@@ -115,33 +116,17 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text('Cancelar'),
+                    child: const Text('Cancelar'),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      if (formKey.currentState!.saveAndValidate()) {
-                        final data = formKey.currentState!.value;
-                        // ignore: unused_local_variable
-                        final nuevoServicio = Servicio(
-                          fecha: DateTime.now().toUtc(),
-                          servicio: data['servicio'],
-                          detalles:
-                              data['zona'] +
-                              (data['comentarios']?.isNotEmpty == true
-                                  ? ' - ${data['comentarios']}'
-                                  : ''),
-                          zona: '',
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
+                    onPressed: _actualizarServicio,
                     icon: const Icon(Icons.save),
                     label: const Text('Guardar'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColoresApp.primario,
                       foregroundColor: ColoresApp.fondo,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: 14,
                         horizontal: 20,
                       ),
@@ -158,74 +143,112 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
       ),
     );
   }
-}
 
-InputDecoration _estiloInput(String label, IconData icono) {
-  return InputDecoration(
-    prefixIcon: Icon(
-      icono,
-      color: ColoresApp.primario,
-      size: TamanoIcono.mediano,
-    ),
-    labelText: label,
-    labelStyle: GoogleFonts.inter(
-      fontSize: TamanoLetra.textoNormal,
-      color: ColoresApp.textoMedio,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
-    ),
-    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-  );
-}
+  Future<void> _actualizarServicio() async {
+    if (formKey.currentState?.saveAndValidate() ?? false) {
+      final data = formKey.currentState!.value;
+      
+      final servicioActualizado = Servicio(
+        fecha: DateTime.now().toUtc(),
+        servicio: data['servicio'] as String,
+        detalles: '${data['zona']} - ${data['comentarios']}',
+        zona: data['zona'] as String,
+      );
 
-InputDecoration _estiloDropDown(IconData icono, String label) {
-  return InputDecoration(
-    prefixIcon: Icon(
-      icono,
-      color: ColoresApp.primario,
-      size: TamanoIcono.mediano,
-    ),
-    label: Text(label),
-    labelStyle: GoogleFonts.inter(
-      fontSize: TamanoLetra.textoNormal,
-      color: ColoresApp.textoMedio,
-    ),
-    filled: true,
-    fillColor: ColoresApp.fondoTarjeta,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
-    ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  );
+      final resultado = await ServicioFirebase.updateService(
+        widget.mototaxi.placa,
+        widget.comentario,
+        servicioActualizado,
+      );
+
+      if (!mounted) return;
+
+      if (resultado.contains('correctamente')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(resultado),
+            backgroundColor: ColoresApp.exito,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(resultado),
+            backgroundColor: ColoresApp.error,
+          ),
+        );
+      }
+    }
+  }
+
+  InputDecoration _estiloInput(String label, IconData icono) {
+    return InputDecoration(
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.mediano,
+      ),
+      labelText: label,
+      labelStyle: GoogleFonts.inter(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+    );
+  }
+
+  InputDecoration _estiloDropDown(IconData icono, String label) {
+    return InputDecoration(
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.mediano,
+      ),
+      label: Text(label),
+      labelStyle: GoogleFonts.inter(
+        fontSize: TamanoLetra.textoNormal,
+        color: ColoresApp.textoMedio,
+      ),
+      filled: true,
+      fillColor: ColoresApp.fondoTarjeta,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.primario, width: 1.4),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.gris, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
+  }
 }
