@@ -1,193 +1,242 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:app_motoservice/theme/colors.dart';
 import 'package:app_motoservice/theme/iconos.dart';
 import 'package:app_motoservice/theme/typography.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:app_motoservice/models/mototaxis_modelo.dart';
+import 'package:app_motoservice/services/firebase_service.dart';
 
-class NuevoServicio extends StatelessWidget {
+class NuevoServicio extends StatefulWidget {
   final String? mototaxiPlaca;
   const NuevoServicio({super.key, this.mototaxiPlaca});
 
   @override
+  State<NuevoServicio> createState() => _NuevoServicioState();
+}
+
+class _NuevoServicioState extends State<NuevoServicio> {
+  final _formKey = GlobalKey<FormBuilderState>();
+  final _autoValidate = AutovalidateMode.onUserInteraction;
+
+  final _servicios = const [
+    'Mantenimiento',
+    'Electrica',
+    'Cambio de llantas',
+    'Revisión y ajuste de frenos',
+    'Cambio de aceite',
+    'Lavado y estética',
+    'Lubricación de cadena',
+  ];
+
+  final _zonas = const [
+    'Selene',
+    'Las Arboledas',
+    'El triángulo',
+    'San Francisco Tlaltenco',
+    'Ojo de Agua',
+    'San Miguel (Tláhuac)',
+    'Quiahutla',
+    'La Ciénega',
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormBuilderState>();
-    AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
-
-    final servicios = [
-      'Mantenimiento',
-      'Electrica',
-      'Cambio de llantas',
-      'Revisión y ajuste de frenos',
-      'Cambio de aceite',
-      'Lavado y estética',
-      'Lubricación de cadena',
-    ];
-
-    final zonas = [
-      'Selene',
-      'Las Arboledas',
-      'El triángulo',
-      'San Francisco Tlaltenco',
-      'Ojo de Agua',
-      'San Miguel (Tláhuac)',
-      'Quiahutla',
-      'La Ciénega',
-    ];
-
     return Scaffold(
       backgroundColor: ColoresApp.fondo,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: FormBuilder(
-            autovalidateMode: autoValidateMode,
-            key: formKey,
-            child: Column(
-              children: [
-                FormBuilderDropdown(
-                  name: 'placa',
-                  hint: Text('Elige un mototaxi'),
-                  initialValue: mototaxiPlaca,
-                  items: [],
-                  decoration: _estiloInput('Placa', Icons.article_outlined),
-                  validator: FormBuilderValidators.required(
-                    errorText: 'La placa es obligatoria',
-                  ),
-                  dropdownColor: ColoresApp.fondoTarjeta,
-                  isExpanded: true,
-                  style: GoogleFonts.montserrat(
-                    color: ColoresApp.textoOscuro,
-                    fontSize: TamanoLetra.textoPequeno,
-                    fontWeight: FontWeight.w500,
-                  ),
+        child: StreamBuilder<List<Mototaxi>>(
+          stream: FirebaseService.getMototaxisStream(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error al cargar mototaxis',
+                  style: TextStyle(color: ColoresApp.error),
                 ),
-                const SizedBox(height: 12),
-                FormBuilderDropdown(
-                  name: 'servicio',
-                  decoration: _estiloDropDown(Icons.build_outlined),
-                  dropdownColor: ColoresApp.fondoTarjeta,
-                  isExpanded: true,
-                  hint: Text(
-                    'Servicio',
-                    style: TextStyle(
-                      fontSize: TamanoLetra.textoNormal,
-                      color: ColoresApp.textoMedio,
-                    ),
-                  ),
-                  items:
-                      servicios
+              );
+            }
+
+            final mototaxis = snapshot.data ?? [];
+            final mototaxisByPlaca = {
+              for (var m in mototaxis) m.placa: m,
+            };
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: FormBuilder(
+                key: _formKey,
+                autovalidateMode: _autoValidate,
+                child: Column(
+                  children: [
+                    FormBuilderDropdown<String>(
+                      name: 'placa',
+                      hint: const Text('Elige un mototaxi'),
+                      initialValue: widget.mototaxiPlaca,
+                      decoration: _estiloInput('Placa', Icons.article_outlined),
+                      validator: FormBuilderValidators.required(
+                        errorText: 'La placa es obligatoria',
+                      ),
+                      isExpanded: true,
+                      dropdownColor: ColoresApp.fondoTarjeta,
+                      style: GoogleFonts.montserrat(
+                        color: ColoresApp.textoOscuro,
+                        fontSize: TamanoLetra.textoPequeno,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      items: mototaxis
                           .map(
-                            (serv) => DropdownMenuItem(
+                            (m) => DropdownMenuItem<String>(
+                              value: m.placa,
+                              child: Text('${m.nombre}  •  ${m.placa}'),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: 12),
+                    FormBuilderDropdown<String>(
+                      name: 'servicio',
+                      decoration: _estiloDropDown(Icons.build_outlined),
+                      dropdownColor: ColoresApp.fondoTarjeta,
+                      isExpanded: true,
+                      hint: Text(
+                        'Servicio',
+                        style: TextStyle(
+                          fontSize: TamanoLetra.textoNormal,
+                          color: ColoresApp.textoMedio,
+                        ),
+                      ),
+                      items: _servicios
+                          .map(
+                            (serv) => DropdownMenuItem<String>(
                               value: serv,
                               child: Text(serv),
                             ),
                           )
                           .toList(),
-                  validator: FormBuilderValidators.required(
-                    errorText: 'Selecciona un servicio',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FormBuilderDropdown(
-                  name: 'zona',
-                  decoration: _estiloDropDown(Icons.location_on_outlined),
-                  dropdownColor: ColoresApp.fondoTarjeta,
-                  isExpanded: true,
-                  hint: Text(
-                    'Zona',
-                    style: TextStyle(
-                      fontSize: TamanoLetra.textoNormal,
-                      color: ColoresApp.textoMedio,
+                      validator: FormBuilderValidators.required(
+                        errorText: 'Selecciona un servicio',
+                      ),
                     ),
-                  ),
-                  items:
-                      zonas
+                    const SizedBox(height: 12),
+                    FormBuilderDropdown<String>(
+                      name: 'zona',
+                      decoration: _estiloDropDown(Icons.location_on_outlined),
+                      dropdownColor: ColoresApp.fondoTarjeta,
+                      isExpanded: true,
+                      hint: Text(
+                        'Zona',
+                        style: TextStyle(
+                          fontSize: TamanoLetra.textoNormal,
+                          color: ColoresApp.textoMedio,
+                        ),
+                      ),
+                      items: _zonas
                           .map(
-                            (zona) => DropdownMenuItem(
+                            (zona) => DropdownMenuItem<String>(
                               value: zona,
                               child: Text(zona),
                             ),
                           )
                           .toList(),
-                  validator: FormBuilderValidators.required(
-                    errorText: 'Selecciona una zona',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FormBuilderTextField(
-                  name: 'comentarios',
-                  maxLength: 150,
-                  decoration: _estiloInput(
-                    'Comentarios',
-                    Icons.comment_outlined,
-                  ),
-                  validator: FormBuilderValidators.maxLength(
-                    150,
-                    errorText: "Máximo 150 caracteres",
-                  ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final messenger = ScaffoldMessenger.of(context);
-                      if (formKey.currentState?.saveAndValidate() ?? false) {
-                        final data = formKey.currentState!.value;
-                        // ignore: unused_local_variable
-                        final placa = data['placa'];
+                      validator: FormBuilderValidators.required(
+                        errorText: 'Selecciona una zona',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    FormBuilderTextField(
+                      name: 'comentarios',
+                      maxLength: 150,
+                      decoration:
+                          _estiloInput('Comentarios', Icons.comment_outlined),
+                      validator: FormBuilderValidators.maxLength(
+                        150,
+                        errorText: 'Máximo 150 caracteres',
+                      ),
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final messenger = ScaffoldMessenger.of(context);
+                          if (!(_formKey.currentState?.saveAndValidate() ??
+                              false)) {
+                            return;
+                          }
 
-                        // final existe = await _placaRegistrada(placa);
+                          final data = _formKey.currentState!.value;
+                          final placa = data['placa'] as String;
+                          final mototaxiSel = mototaxisByPlaca[placa];
 
-                        // if (!existe) {
-                        //   messenger.showSnackBar(
-                        //     const SnackBar(
-                        //       content: Text('La placa no está registrada.'),
-                        //       backgroundColor: Colors.red,
-                        //     ),
-                        //   );
-                        //   return;
-                        // }
+                          if (mototaxiSel == null) {
+                            messenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('Mototaxi no encontrada'),
+                                backgroundColor: ColoresApp.error,
+                              ),
+                            );
+                            return;
+                          }
 
-                        // ignore: unused_local_variable
-                        final servicioConHora = {
-                          ...data,
-                          'fecha': DateTime.now().toUtc(),
-                        };
-                        messenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('Servicio guardado correctamente.'),
-                            backgroundColor: ColoresApp.exito,
+                          final nuevoServicio = Servicio(
+                            fecha: DateTime.now().toUtc(),
+                            servicio: data['servicio'],
+                            detalles: (data['comentarios'] ?? '').trim(),
+                            zona: data['zona'],
+                          );
+
+                          final respuesta = await FirebaseService.addService(
+                            nuevoServicio,
+                            placa,
+                            mototaxiSel.nombre,
+                          );
+
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(respuesta),
+                              backgroundColor: respuesta.startsWith('Error')
+                                  ? ColoresApp.error
+                                  : ColoresApp.exito,
+                            ),
+                          );
+                          if (!respuesta.startsWith('Error')) {
+                          _formKey.currentState?.reset();
+    
+                            if (widget.mototaxiPlaca != null) {
+                              _formKey.currentState?.fields['placa']?.didChange(widget.mototaxiPlaca);
+                              }
+                            }
+
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColoresApp.primario,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColoresApp.primario,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 3,
-                    ),
-                    child: Text(
-                      'Agregar servicio',
-                      style: TextStyle(
-                        fontSize: TamanoLetra.textoNormal,
-                        color: ColoresApp.fondo,
+                          elevation: 3,
+                        ),
+                        child: Text(
+                          'Agregar servicio',
+                          style: TextStyle(
+                            fontSize: TamanoLetra.textoNormal,
+                            color: ColoresApp.fondo,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -195,11 +244,8 @@ class NuevoServicio extends StatelessWidget {
 
   InputDecoration _estiloInput(String label, IconData icono) {
     return InputDecoration(
-      prefixIcon: Icon(
-        icono,
-        color: ColoresApp.primario,
-        size: TamanoIcono.grande,
-      ),
+      prefixIcon: Icon(icono,
+          color: ColoresApp.primario, size: TamanoIcono.grande),
       labelText: label.isNotEmpty ? label : null,
       labelStyle: GoogleFonts.inter(
         fontSize: TamanoLetra.textoNormal,
@@ -221,17 +267,14 @@ class NuevoServicio extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
       ),
-      contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
     );
   }
 
   InputDecoration _estiloDropDown(IconData icono) {
     return InputDecoration(
-      prefixIcon: Icon(
-        icono,
-        color: ColoresApp.primario,
-        size: TamanoIcono.grande,
-      ),
+      prefixIcon: Icon(icono,
+          color: ColoresApp.primario, size: TamanoIcono.grande),
       labelStyle: GoogleFonts.inter(
         fontSize: TamanoLetra.textoNormal,
         color: ColoresApp.textoMedio,
@@ -258,7 +301,7 @@ class NuevoServicio extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: ColoresApp.error, width: 1.4),
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 }
