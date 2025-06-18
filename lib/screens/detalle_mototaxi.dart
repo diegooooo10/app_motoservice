@@ -11,8 +11,7 @@ import 'package:app_motoservice/screens/barra_navegacion.dart';
 class DetalleMototaxiScreen extends StatelessWidget {
   final Mototaxi mototaxi;
 
-  const DetalleMototaxiScreen({Key? key, required this.mototaxi})
-    : super(key: key);
+  const DetalleMototaxiScreen({super.key, required this.mototaxi});
 
   @override
   Widget build(BuildContext context) {
