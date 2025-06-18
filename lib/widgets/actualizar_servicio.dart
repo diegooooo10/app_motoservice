@@ -151,7 +151,7 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
       final servicioActualizado = Servicio(
         fecha: DateTime.now().toUtc(),
         servicio: data['servicio'] as String,
-        detalles: '${data['zona']} - ${data['comentarios']}',
+        detalles: '${data['comentarios']}',
         zona: data['zona'] as String,
       );
 
