@@ -23,8 +23,7 @@ class MototaxiDescripcion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Formato de fecha en español
-    final DateFormat formato =
-        DateFormat("d MMMM y 'a las' HH:mm", 'es_ES');
+    final DateFormat formato = DateFormat("d MMMM y 'a las' HH:mm", 'es_ES');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
@@ -39,8 +38,12 @@ class MototaxiDescripcion extends StatelessWidget {
         elevation: 3,
         color: ColoresApp.fondoTarjeta,
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 14, bottom: 8, left: 20, right: 20),
+          padding: const EdgeInsets.only(
+            top: 14,
+            bottom: 8,
+            left: 20,
+            right: 20,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -50,9 +53,11 @@ class MototaxiDescripcion extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.build_circle_outlined,
-                          color: ColoresApp.primario,
-                          size: TamanoIcono.mediano),
+                      Icon(
+                        Icons.build_circle_outlined,
+                        color: ColoresApp.primario,
+                        size: TamanoIcono.mediano,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         servicio.servicio,
@@ -74,14 +79,16 @@ class MototaxiDescripcion extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               // ---------- detalles ----------
-              Text(servicio.detalles,
-                  style: GoogleFonts.inter(fontSize: 13)),
+              Text(servicio.detalles, style: GoogleFonts.inter(fontSize: 13)),
               const SizedBox(height: 8),
               // ---------- zona + botones ----------
               Row(
                 children: [
-                  Icon(Icons.location_on,
-                      size: TamanoIcono.mediano, color: ColoresApp.textoMedio),
+                  Icon(
+                    Icons.location_on,
+                    size: TamanoIcono.mediano,
+                    color: ColoresApp.textoMedio,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     servicio.zona,
@@ -96,15 +103,17 @@ class MototaxiDescripcion extends StatelessWidget {
                     onPressed: () {
                       _mostrarEditar(context);
                     },
-                    child: Text('Editar',
-                        style:
-                            GoogleFonts.inter(color: ColoresApp.primario)),
+                    child: Text(
+                      'Editar',
+                      style: GoogleFonts.inter(color: ColoresApp.primario),
+                    ),
                   ),
                   // ------------ botón eliminar ------------
                   TextButton(
                     onPressed: () => _confirmarEliminar(context),
                     style: TextButton.styleFrom(
-                        foregroundColor: ColoresApp.error),
+                      foregroundColor: ColoresApp.error,
+                    ),
                     child: const Text('Eliminar'),
                   ),
                 ],
@@ -120,103 +129,110 @@ class MototaxiDescripcion extends StatelessWidget {
   void _mostrarEditar(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-        child: Container(
-          decoration: BoxDecoration(
-            color: ColoresApp.fondo,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      builder:
+          (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 40,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ColoresApp.fondo,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Editar Servicio',
-                      style: GoogleFonts.montserrat(
-                        fontSize: TamanoLetra.titulo,
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Row(
+                    children: [
+                      Text(
+                        'Editar Servicio',
+                        style: GoogleFonts.montserrat(
+                          fontSize: TamanoLetra.titulo,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(color: Colors.grey.shade300),
+                  const SizedBox(height: 10),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: ActualizarServicio(
+                        mototaxi: mototaxi,
+                        comentario: servicio.detalles,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              Divider(color: Colors.grey.shade300),
-              const SizedBox(height: 10),
-              Flexible(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: ActualizarServicio(
-                    mototaxi: mototaxi,
-                    comentario: servicio.detalles,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
   void _confirmarEliminar(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: ColoresApp.fondoTarjeta,
-        title: Text('Eliminar servicio',
-            style: GoogleFonts.inter(fontSize: TamanoLetra.titulo)),
-        content: Text(
-          '¿Estás seguro? Esta acción no se puede deshacer.',
-          style: GoogleFonts.montserrat(fontSize: TamanoLetra.textoPequeno),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+      builder:
+          (_) => AlertDialog(
+            backgroundColor: ColoresApp.fondoTarjeta,
+            title: Text(
+              'Eliminar servicio',
+              style: GoogleFonts.inter(fontSize: TamanoLetra.titulo),
+            ),
+            content: Text(
+              '¿Estás seguro? Esta acción no se puede deshacer.',
+              style: GoogleFonts.montserrat(fontSize: TamanoLetra.textoPequeno),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: ColoresApp.error),
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  Navigator.of(context).pop();
+                  final resultado = await _eliminarServicio(context);
+                  if (resultado) {
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        content: Text('Servicio eliminado correctamente'),
+                        backgroundColor: ColoresApp.exito,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Eliminar'),
+              ),
+            ],
           ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: ColoresApp.error),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final resultado = await _eliminarServicio(context);
-              if (resultado) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Servicio eliminado correctamente'),
-                    backgroundColor: ColoresApp.exito,
-                  ),
-                );
-              }
-            },
-            child: const Text('Eliminar'),
-          ),
-        ],
-      ),
     );
   }
 
   Future<bool> _eliminarServicio(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       final resultado = await ServicioFirebase.deleteService(
         servicio.detalles,
-        mototaxi.placa,  
+        mototaxi.placa,
       );
-      
+
       if (resultado.contains('correctamente')) {
         return true;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(resultado),
-            backgroundColor: ColoresApp.error,
-          ),
+        messenger.showSnackBar(
+          SnackBar(content: Text(resultado), backgroundColor: ColoresApp.error),
         );
         return false;
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text('Error al eliminar: ${e.toString()}'),
           backgroundColor: ColoresApp.error,
