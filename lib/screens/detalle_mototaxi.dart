@@ -96,7 +96,7 @@ class DetalleMototaxiScreen extends StatelessWidget {
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (context) {
+                              builder: (dialogContext) {
                                 return AlertDialog(
                                   backgroundColor: ColoresApp.fondoTarjeta,
                                   title: Text(
@@ -114,7 +114,8 @@ class DetalleMototaxiScreen extends StatelessWidget {
                                   actions: [
                                     TextButton(
                                       onPressed:
-                                          () => Navigator.of(context).pop(),
+                                          () =>
+                                              Navigator.of(dialogContext).pop(),
                                       child: const Text('Cancelar'),
                                     ),
                                     TextButton(
@@ -122,47 +123,34 @@ class DetalleMototaxiScreen extends StatelessWidget {
                                         foregroundColor: ColoresApp.error,
                                       ),
                                       onPressed: () async {
+                                        Navigator.of(dialogContext).pop();
+                                        final messenger = ScaffoldMessenger.of(
+                                          context,
+                                        );
+
                                         final String resultado =
                                             await FirebaseService.deleteMototaxi(
                                               mototaxi.placa,
                                             );
-
-                                        if (!context.mounted) return;
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                              SnackBar(
-                                                content: Text(resultado),
-                                                backgroundColor:
-                                                    resultado.contains('Error')
-                                                        ? Colors.red
-                                                        : Colors.green,
-                                                duration: Duration(seconds: 2),
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                                margin: EdgeInsets.all(16),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                              ),
-                                            )
-                                            .closed
-                                            .then((_) {
-                                              if (context.mounted) {
-                                                Navigator.of(context).pop(true);
-                                                Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (_) => BarraNavegacion(
-                                                          selectedIndex: 0,
-                                                        ),
-                                                  ),
-                                                  (route) => false,
-                                                );
-                                              }
-                                            });
+                                        messenger.showSnackBar(
+                                          SnackBar(
+                                            content: Text(resultado),
+                                            backgroundColor:
+                                                resultado.startsWith('Error') ||
+                                                        resultado.contains(
+                                                          'existe',
+                                                        )
+                                                    ? ColoresApp.error
+                                                    : ColoresApp.exito,
+                                            duration: Duration(seconds: 2),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: EdgeInsets.all(16),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        );
                                       },
                                       child: const Text('Eliminar'),
                                     ),

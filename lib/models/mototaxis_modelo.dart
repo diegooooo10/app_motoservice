@@ -10,19 +10,25 @@ class Servicio {
     required this.fecha,
     required this.servicio,
     required this.detalles,
-    required this.zona
+    required this.zona,
   });
 
   factory Servicio.fromMap(Map<String, dynamic> map) {
     return Servicio(
-      fecha: (map['fecha'] as Timestamp).toDate(),
-      zona: map['zona'],
-      servicio: map['servicio'],
-      detalles: map['detalles'],
+      fecha: (map['fecha'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      servicio: map['servicio'] ?? '',
+      detalles: map['detalles'] ?? '',
+      zona: map['zona'] ?? '',
     );
   }
-    Map<String, dynamic> toMap() {
-    return {'fecha': fecha, 'servicio': servicio, 'detalles': detalles, 'zona': zona};
+
+  Map<String, dynamic> toMap() {
+    return {
+      'fecha': fecha,
+      'servicio': servicio,
+      'detalles': detalles,
+      'zona': zona,
+    };
   }
 }
 
@@ -45,9 +51,9 @@ class Mototaxi {
         serviciosFromMap.map((s) => Servicio.fromMap(s)).toList();
 
     return Mototaxi(
-      nombre: map['nombre'],
-      placa: map['placa'],
-      numero: map['numero'],
+      nombre: map['nombre'] ?? 'Sin nombre',
+      placa: map['placa'] ?? '',
+      numero: map['numero'] ?? '',
       servicios: serviciosList,
     );
   }
