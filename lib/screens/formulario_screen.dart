@@ -38,6 +38,7 @@ class _FormularioScreenState extends State<FormularioScreen>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: widget.initialTab ?? 0,
       length: 2,
       child: Scaffold(
         backgroundColor: ColoresApp.fondo,

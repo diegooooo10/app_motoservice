@@ -94,7 +94,82 @@ class DetalleMototaxiScreen extends StatelessWidget {
                             color: ColoresApp.error,
                           ),
                           onPressed: () {
-                            _confirmarEliminar(context, mototaxi.placa);
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: ColoresApp.fondoTarjeta,
+                                  title: Text(
+                                    'Eliminar mototaxi',
+                                    style: GoogleFonts.inter(
+                                      fontSize: TamanoLetra.titulo,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    '¿Estás seguro? Esta acción no se puede deshacer.',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: TamanoLetra.textoPequeno,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: ColoresApp.error,
+                                      ),
+                                      onPressed: () async {
+                                        final String resultado =
+                                            await FirebaseService.deleteMototaxi(
+                                              mototaxi.placa,
+                                            );
+
+                                        if (!context.mounted) return;
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                              SnackBar(
+                                                content: Text(resultado),
+                                                backgroundColor:
+                                                    resultado.contains('Error')
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                duration: Duration(seconds: 2),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                margin: EdgeInsets.all(16),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            )
+                                            .closed
+                                            .then((_) {
+                                              if (context.mounted) {
+                                                Navigator.of(context).pop(true);
+                                                Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => BarraNavegacion(
+                                                          selectedIndex: 0,
+                                                        ),
+                                                  ),
+                                                  (route) => false,
+                                                );
+                                              }
+                                            });
+                                      },
+                                      child: const Text('Eliminar'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                         ),
                       ],
@@ -117,11 +192,12 @@ class DetalleMototaxiScreen extends StatelessWidget {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => BarraNavegacion(
-                              selectedIndex: 1,
-                              formularioInitialTab: 1,
-                              mototaxiPlaca: mototaxi.placa,
-                            ),
+                            builder:
+                                (_) => BarraNavegacion(
+                                  selectedIndex: 1,
+                                  formularioInitialTab: 1,
+                                  mototaxiPlaca: mototaxi.placa,
+                                ),
                           ),
                           (_) => false,
                         );
@@ -142,94 +218,34 @@ class DetalleMototaxiScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: mototaxi.servicios.isEmpty
-                      ? Center(
-                          child: Text(
-                            'No hay servicios registrados.',
-                            style: GoogleFonts.inter(
-                              fontSize: TamanoLetra.textoNormal,
-                              color: ColoresApp.textoMedio,
+                  child:
+                      mototaxi.servicios.isEmpty
+                          ? Center(
+                            child: Text(
+                              'No hay servicios registrados.',
+                              style: GoogleFonts.inter(
+                                fontSize: TamanoLetra.textoNormal,
+                                color: ColoresApp.textoMedio,
+                              ),
                             ),
+                          )
+                          : ListView.builder(
+                            itemCount: mototaxi.servicios.length,
+                            itemBuilder: (context, index) {
+                              final servicio = mototaxi.servicios[index];
+                              return MototaxiDescripcion(
+                                index: index,
+                                servicio: servicio,
+                                mototaxi: mototaxi,
+                              );
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: mototaxi.servicios.length,
-                          itemBuilder: (context, index) {
-                            final servicio = mototaxi.servicios[index];
-                            return MototaxiDescripcion(
-                              index: index,
-                              servicio: servicio,
-                              mototaxi: mototaxi,
-                            );
-                          },
-                        ),
                 ),
               ],
             ),
           );
         },
       ),
-    );
-  }
-
-  void _confirmarEliminar(BuildContext context, String placa) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: ColoresApp.fondoTarjeta,
-          title: Text(
-            'Eliminar mototaxi',
-            style: GoogleFonts.inter(fontSize: TamanoLetra.titulo),
-          ),
-          content: Text(
-            '¿Estás seguro? Esta acción no se puede deshacer.',
-            style: GoogleFonts.montserrat(fontSize: TamanoLetra.textoPequeno),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(foregroundColor: ColoresApp.error),
-              onPressed: () async {
-                Navigator.of(context).pop(); 
-
-                final mensaje = await FirebaseService.deleteMototaxi(placa);
-
-                if (!context.mounted) return;
-
-                if (!mensaje.startsWith('Error')) {
-                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const BarraNavegacion(selectedIndex: 0),
-                    ),
-                    (_) => false,
-                  );
-
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(mensaje),
-                        backgroundColor: ColoresApp.exito,
-                      ),
-                    );
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(mensaje),
-                      backgroundColor: ColoresApp.error,
-                    ),
-                  );
-                }
-              },
-              child: const Text('Eliminar'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -30,7 +30,6 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final List<String> serviciosDisponibles = [
@@ -69,9 +68,10 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                 name: 'servicio',
                 hint: const Text('Tipo de servicio'),
                 decoration: _estiloDropDown(Icons.build, 'Servicio'),
-                items: serviciosDisponibles
-                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                    .toList(),
+                items:
+                    serviciosDisponibles
+                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                        .toList(),
                 validator: FormBuilderValidators.required(
                   errorText: 'Seleccione un servicio',
                 ),
@@ -81,9 +81,10 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                 name: 'zona',
                 hint: const Text('Zona de servicio'),
                 decoration: _estiloDropDown(Icons.location_on, 'Zona'),
-                items: zonasDisponibles
-                    .map((z) => DropdownMenuItem(value: z, child: Text(z)))
-                    .toList(),
+                items:
+                    zonasDisponibles
+                        .map((z) => DropdownMenuItem(value: z, child: Text(z)))
+                        .toList(),
                 validator: FormBuilderValidators.required(
                   errorText: 'Seleccione una zona',
                 ),
@@ -147,7 +148,7 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
   Future<void> _actualizarServicio() async {
     if (formKey.currentState?.saveAndValidate() ?? false) {
       final data = formKey.currentState!.value;
-      
+
       final servicioActualizado = Servicio(
         fecha: DateTime.now().toUtc(),
         servicio: data['servicio'] as String,
@@ -168,6 +169,12 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
           SnackBar(
             content: Text(resultado),
             backgroundColor: ColoresApp.exito,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
         Navigator.pop(context);
@@ -176,6 +183,12 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
           SnackBar(
             content: Text(resultado),
             backgroundColor: ColoresApp.error,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }

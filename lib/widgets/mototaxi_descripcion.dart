@@ -51,23 +51,34 @@ class MototaxiDescripcion extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.build_circle_outlined,
-                        color: ColoresApp.primario,
-                        size: TamanoIcono.mediano,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        servicio.servicio,
-                        style: GoogleFonts.montserrat(
-                          fontSize: TamanoLetra.textoNormal,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.build_circle_outlined,
+                          color: ColoresApp.primario,
+                          size: TamanoIcono.mediano,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Tooltip(
+                            message: servicio.servicio,
+                            child: Text(
+                              servicio.servicio,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: GoogleFonts.montserrat(
+                                fontSize: TamanoLetra.textoNormal,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     formato.format(servicio.fecha),
                     style: GoogleFonts.inter(
@@ -83,39 +94,58 @@ class MototaxiDescripcion extends StatelessWidget {
               const SizedBox(height: 8),
               // ---------- zona + botones ----------
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    Icons.location_on,
-                    size: TamanoIcono.mediano,
-                    color: ColoresApp.textoMedio,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    servicio.zona,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: ColoresApp.textoMedio,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: TamanoIcono.mediano,
+                          color: ColoresApp.textoMedio,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Tooltip(
+                            message: servicio.zona,
+                            child: Text(
+                              servicio.zona,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: ColoresApp.textoMedio,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          _mostrarEditar(context);
+                        },
+                        child: Text(
+                          'Editar',
+                          style: GoogleFonts.inter(color: ColoresApp.primario),
+                        ),
+                      ),
+                      // ------------ botón eliminar ------------
+                      TextButton(
+                        onPressed: () => _confirmarEliminar(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: ColoresApp.error,
+                        ),
+                        child: const Text('Eliminar'),
+                      ),
+                    ],
+                  ),
+
                   // ------------ botón editar ------------
-                  TextButton(
-                    onPressed: () {
-                      _mostrarEditar(context);
-                    },
-                    child: Text(
-                      'Editar',
-                      style: GoogleFonts.inter(color: ColoresApp.primario),
-                    ),
-                  ),
-                  // ------------ botón eliminar ------------
-                  TextButton(
-                    onPressed: () => _confirmarEliminar(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: ColoresApp.error,
-                    ),
-                    child: const Text('Eliminar'),
-                  ),
                 ],
               ),
             ],
@@ -201,9 +231,15 @@ class MototaxiDescripcion extends StatelessWidget {
                   final resultado = await _eliminarServicio(context);
                   if (resultado) {
                     messenger.showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text('Servicio eliminado correctamente'),
                         backgroundColor: ColoresApp.exito,
+                        duration: Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                        margin: EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     );
                   }
@@ -227,7 +263,16 @@ class MototaxiDescripcion extends StatelessWidget {
         return true;
       } else {
         messenger.showSnackBar(
-          SnackBar(content: Text(resultado), backgroundColor: ColoresApp.error),
+          SnackBar(
+            content: Text(resultado),
+            backgroundColor: ColoresApp.error,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
         return false;
       }
@@ -236,6 +281,12 @@ class MototaxiDescripcion extends StatelessWidget {
         SnackBar(
           content: Text('Error al eliminar: ${e.toString()}'),
           backgroundColor: ColoresApp.error,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return false;

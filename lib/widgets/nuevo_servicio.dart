@@ -18,7 +18,8 @@ class NuevoServicio extends StatefulWidget {
 
 class _NuevoServicioState extends State<NuevoServicio> {
   final _formKey = GlobalKey<FormBuilderState>();
-  AutovalidateMode _autoValidateMode = AutovalidateMode.onUserInteraction;
+  AutovalidateMode _autoValidate = AutovalidateMode.onUserInteraction;
+  bool _isSubmitting = false;
 
   final _servicios = const [
     'Mantenimiento',
@@ -68,7 +69,7 @@ class _NuevoServicioState extends State<NuevoServicio> {
               padding: const EdgeInsets.all(16),
               child: FormBuilder(
                 key: _formKey,
-                autovalidateMode: _autoValidateMode,
+                autovalidateMode: _autoValidate,
                 child: Column(
                   children: [
                     FormBuilderDropdown<String>(
@@ -166,83 +167,95 @@ class _NuevoServicioState extends State<NuevoServicio> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          final messenger = ScaffoldMessenger.of(context);
-                          final isValid =
-                              _formKey.currentState?.saveAndValidate() ?? false;
+                        onPressed:
+                            _isSubmitting
+                                ? null
+                                : () async {
+                                  final messenger = ScaffoldMessenger.of(
+                                    context,
+                                  );
+                                  if (!(_formKey.currentState
+                                          ?.saveAndValidate() ??
+                                      false)) {
+                                    return;
+                                  }
 
-                          if (!isValid) {
-                            setState(() {
-                              _autoValidateMode =
-                                  AutovalidateMode.onUserInteraction;
-                            });
-                            return;
-                          }
+                                  setState(() {
+                                    _isSubmitting = true;
+                                  });
+                                  final data = _formKey.currentState!.value;
+                                  final placa = data['placa'];
+                                  final mototaxiSel = mototaxisByPlaca[placa];
 
-                          final data = _formKey.currentState!.value;
-                          final placa = data['placa'] as String;
-                          final mototaxiSel = mototaxisByPlaca[placa];
+                                  if (mototaxiSel == null) {
+                                    messenger.showSnackBar(
+                                      SnackBar(
+                                        content: Text('Mototaxi no encontrada'),
+                                        backgroundColor: ColoresApp.error,
+                                        duration: Duration(seconds: 2),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                    setState(() => _isSubmitting = false);
+                                    return;
+                                  }
+                                  final nuevoServicio = Servicio(
+                                    fecha: DateTime.now().toUtc(),
+                                    servicio: data['servicio'],
+                                    detalles:
+                                        (data['comentarios'] ?? '').trim(),
+                                    zona: data['zona'],
+                                  );
 
-                          if (mototaxiSel == null) {
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Mototaxi no encontrada'),
-                                backgroundColor: ColoresApp.error,
-                              ),
-                            );
-                            return;
-                          }
+                                  final respuesta =
+                                      await FirebaseService.addService(
+                                        nuevoServicio,
+                                        placa,
+                                        mototaxiSel.nombre,
+                                      );
 
-                          final nuevoServicio = Servicio(
-                            fecha: DateTime.now().toUtc(),
-                            servicio: data['servicio'],
-                            detalles: (data['comentarios'] ?? '').trim(),
-                            zona: data['zona'],
-                          );
+                                  messenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(respuesta),
+                                      backgroundColor:
+                                          respuesta.startsWith('Error')
+                                              ? ColoresApp.error
+                                              : ColoresApp.exito,
+                                      duration: Duration(seconds: 2),
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: EdgeInsets.all(16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  if (!respuesta.startsWith('Error')) {
+                                    _formKey.currentState?.reset();
+                                    setState(() {
+                                      _autoValidate = AutovalidateMode.disabled;
+                                    });
 
-                          final respuesta = await FirebaseService.addService(
-                            nuevoServicio,
-                            placa,
-                            mototaxiSel.nombre,
-                          );
+                                    if (widget.mototaxiPlaca != null) {
+                                      _formKey.currentState?.fields['placa']
+                                          ?.didChange(widget.mototaxiPlaca);
+                                    }
+                                  } else {
+                                    setState(() {
+                                      _autoValidate =
+                                          AutovalidateMode.onUserInteraction;
+                                    });
+                                  }
 
-                          messenger.showSnackBar(
-                            SnackBar(
-                              content: Text(respuesta),
-                              backgroundColor:
-                                  respuesta.startsWith('Error')
-                                      ? ColoresApp.error
-                                      : ColoresApp.exito,
-                            ),
-                          );
-
-                          if (!respuesta.startsWith('Error')) {
-                            setState(() {
-                              _autoValidateMode = AutovalidateMode.disabled;
-                            });
-
-                            _formKey.currentState?.reset();
-
-                            Future.delayed(Duration.zero, () {
-                              setState(() {
-                                _autoValidateMode =
-                                    AutovalidateMode.onUserInteraction;
-                              });
-                            });
-
-                            if (widget.mototaxiPlaca != null) {
-                              _formKey.currentState?.fields['placa']?.didChange(
-                                widget.mototaxiPlaca,
-                              );
-                            }
-                          } else {
-                            setState(() {
-                              _autoValidateMode =
-                                  AutovalidateMode.onUserInteraction;
-                            });
-                          }
-                        },
-
+                                  setState(() {
+                                    _isSubmitting = false;
+                                  });
+                                },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColoresApp.primario,
                           padding: const EdgeInsets.symmetric(
@@ -254,13 +267,23 @@ class _NuevoServicioState extends State<NuevoServicio> {
                           ),
                           elevation: 3,
                         ),
-                        child: Text(
-                          'Agregar servicio',
-                          style: TextStyle(
-                            fontSize: TamanoLetra.textoNormal,
-                            color: ColoresApp.fondo,
-                          ),
-                        ),
+                        child:
+                            _isSubmitting
+                                ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: ColoresApp.fondo,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : Text(
+                                  'Agregar servicio',
+                                  style: TextStyle(
+                                    fontSize: TamanoLetra.textoNormal,
+                                    color: ColoresApp.fondo,
+                                  ),
+                                ),
                       ),
                     ),
                   ],
