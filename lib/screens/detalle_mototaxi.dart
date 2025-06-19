@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
 import 'package:app_motoservice/services/firebase_service.dart';
 import 'package:app_motoservice/theme/colors.dart';
@@ -35,14 +34,22 @@ class DetalleMototaxiScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return Center(
-              child: Text(
-                'Error al cargar datos',
-                style: TextStyle(color: ColoresApp.error),
-              ),
-            );
+
+          if (!snapshot.hasData) {
+            Future.microtask(() {
+              if (context.mounted) {
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const BarraNavegacion(selectedIndex: 0),
+                  ),
+                  (_) => false,
+                );
+              }
+            });
+
+            return const SizedBox.shrink();
           }
+
           final mototaxi = snapshot.data!;
 
           return Padding(
@@ -61,7 +68,6 @@ class DetalleMototaxiScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // placa + nombre
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -108,16 +114,14 @@ class DetalleMototaxiScreen extends StatelessWidget {
                     ),
                     TextButton.icon(
                       onPressed: () {
-                        // Navega al formulario de nuevo servicio
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder:
-                                (_) => BarraNavegacion(
-                                  selectedIndex: 1,
-                                  formularioInitialTab: 1,
-                                  mototaxiPlaca: mototaxi.placa,
-                                ),
+                            builder: (_) => BarraNavegacion(
+                              selectedIndex: 1,
+                              formularioInitialTab: 1,
+                              mototaxiPlaca: mototaxi.placa,
+                            ),
                           ),
                           (_) => false,
                         );
@@ -138,28 +142,27 @@ class DetalleMototaxiScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child:
-                      mototaxi.servicios.isEmpty
-                          ? Center(
-                            child: Text(
-                              'No hay servicios registrados.',
-                              style: GoogleFonts.inter(
-                                fontSize: TamanoLetra.textoNormal,
-                                color: ColoresApp.textoMedio,
-                              ),
+                  child: mototaxi.servicios.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No hay servicios registrados.',
+                            style: GoogleFonts.inter(
+                              fontSize: TamanoLetra.textoNormal,
+                              color: ColoresApp.textoMedio,
                             ),
-                          )
-                          : ListView.builder(
-                            itemCount: mototaxi.servicios.length,
-                            itemBuilder: (context, index) {
-                              final servicio = mototaxi.servicios[index];
-                              return MototaxiDescripcion(
-                                index: index,
-                                servicio: servicio,
-                                mototaxi: mototaxi,
-                              );
-                            },
                           ),
+                        )
+                      : ListView.builder(
+                          itemCount: mototaxi.servicios.length,
+                          itemBuilder: (context, index) {
+                            final servicio = mototaxi.servicios[index];
+                            return MototaxiDescripcion(
+                              index: index,
+                              servicio: servicio,
+                              mototaxi: mototaxi,
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
@@ -191,27 +194,34 @@ class DetalleMototaxiScreen extends StatelessWidget {
             TextButton(
               style: TextButton.styleFrom(foregroundColor: ColoresApp.error),
               onPressed: () async {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); 
+
                 final mensaje = await FirebaseService.deleteMototaxi(placa);
 
-                // feedback
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(mensaje),
-                    backgroundColor:
-                        mensaje.startsWith('Error')
-                            ? ColoresApp.error
-                            : ColoresApp.exito,
-                  ),
-                );
-                if (!mensaje.startsWith('Error') && context.mounted) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
+
+                if (!mensaje.startsWith('Error')) {
+                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (_) => const BarraNavegacion(selectedIndex: 0),
                     ),
                     (_) => false,
+                  );
+
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(mensaje),
+                        backgroundColor: ColoresApp.exito,
+                      ),
+                    );
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(mensaje),
+                      backgroundColor: ColoresApp.error,
+                    ),
                   );
                 }
               },
