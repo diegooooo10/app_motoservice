@@ -18,7 +18,7 @@ class NuevoServicio extends StatefulWidget {
 
 class _NuevoServicioState extends State<NuevoServicio> {
   final _formKey = GlobalKey<FormBuilderState>();
-  final _autoValidate = AutovalidateMode.onUserInteraction;
+  AutovalidateMode _autoValidateMode = AutovalidateMode.onUserInteraction;
 
   final _servicios = const [
     'Mantenimiento',
@@ -62,15 +62,13 @@ class _NuevoServicioState extends State<NuevoServicio> {
             }
 
             final mototaxis = snapshot.data ?? [];
-            final mototaxisByPlaca = {
-              for (var m in mototaxis) m.placa: m,
-            };
+            final mototaxisByPlaca = {for (var m in mototaxis) m.placa: m};
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: FormBuilder(
                 key: _formKey,
-                autovalidateMode: _autoValidate,
+                autovalidateMode: _autoValidateMode,
                 child: Column(
                   children: [
                     FormBuilderDropdown<String>(
@@ -88,14 +86,15 @@ class _NuevoServicioState extends State<NuevoServicio> {
                         fontSize: TamanoLetra.textoPequeno,
                         fontWeight: FontWeight.w500,
                       ),
-                      items: mototaxis
-                          .map(
-                            (m) => DropdownMenuItem<String>(
-                              value: m.placa,
-                              child: Text('${m.nombre}  •  ${m.placa}'),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          mototaxis
+                              .map(
+                                (m) => DropdownMenuItem<String>(
+                                  value: m.placa,
+                                  child: Text('${m.nombre}  •  ${m.placa}'),
+                                ),
+                              )
+                              .toList(),
                     ),
                     const SizedBox(height: 12),
                     FormBuilderDropdown<String>(
@@ -110,14 +109,15 @@ class _NuevoServicioState extends State<NuevoServicio> {
                           color: ColoresApp.textoMedio,
                         ),
                       ),
-                      items: _servicios
-                          .map(
-                            (serv) => DropdownMenuItem<String>(
-                              value: serv,
-                              child: Text(serv),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          _servicios
+                              .map(
+                                (serv) => DropdownMenuItem<String>(
+                                  value: serv,
+                                  child: Text(serv),
+                                ),
+                              )
+                              .toList(),
                       validator: FormBuilderValidators.required(
                         errorText: 'Selecciona un servicio',
                       ),
@@ -135,14 +135,15 @@ class _NuevoServicioState extends State<NuevoServicio> {
                           color: ColoresApp.textoMedio,
                         ),
                       ),
-                      items: _zonas
-                          .map(
-                            (zona) => DropdownMenuItem<String>(
-                              value: zona,
-                              child: Text(zona),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          _zonas
+                              .map(
+                                (zona) => DropdownMenuItem<String>(
+                                  value: zona,
+                                  child: Text(zona),
+                                ),
+                              )
+                              .toList(),
                       validator: FormBuilderValidators.required(
                         errorText: 'Selecciona una zona',
                       ),
@@ -151,8 +152,10 @@ class _NuevoServicioState extends State<NuevoServicio> {
                     FormBuilderTextField(
                       name: 'comentarios',
                       maxLength: 150,
-                      decoration:
-                          _estiloInput('Comentarios', Icons.comment_outlined),
+                      decoration: _estiloInput(
+                        'Comentarios',
+                        Icons.comment_outlined,
+                      ),
                       validator: FormBuilderValidators.maxLength(
                         150,
                         errorText: 'Máximo 150 caracteres',
@@ -165,8 +168,14 @@ class _NuevoServicioState extends State<NuevoServicio> {
                       child: ElevatedButton(
                         onPressed: () async {
                           final messenger = ScaffoldMessenger.of(context);
-                          if (!(_formKey.currentState?.saveAndValidate() ??
-                              false)) {
+                          final isValid =
+                              _formKey.currentState?.saveAndValidate() ?? false;
+
+                          if (!isValid) {
+                            setState(() {
+                              _autoValidateMode =
+                                  AutovalidateMode.onUserInteraction;
+                            });
                             return;
                           }
 
@@ -200,24 +209,46 @@ class _NuevoServicioState extends State<NuevoServicio> {
                           messenger.showSnackBar(
                             SnackBar(
                               content: Text(respuesta),
-                              backgroundColor: respuesta.startsWith('Error')
-                                  ? ColoresApp.error
-                                  : ColoresApp.exito,
+                              backgroundColor:
+                                  respuesta.startsWith('Error')
+                                      ? ColoresApp.error
+                                      : ColoresApp.exito,
                             ),
                           );
-                          if (!respuesta.startsWith('Error')) {
-                          _formKey.currentState?.reset();
-    
-                            if (widget.mototaxiPlaca != null) {
-                              _formKey.currentState?.fields['placa']?.didChange(widget.mototaxiPlaca);
-                              }
-                            }
 
+                          if (!respuesta.startsWith('Error')) {
+                            setState(() {
+                              _autoValidateMode = AutovalidateMode.disabled;
+                            });
+
+                            _formKey.currentState?.reset();
+
+                            Future.delayed(Duration.zero, () {
+                              setState(() {
+                                _autoValidateMode =
+                                    AutovalidateMode.onUserInteraction;
+                              });
+                            });
+
+                            if (widget.mototaxiPlaca != null) {
+                              _formKey.currentState?.fields['placa']?.didChange(
+                                widget.mototaxiPlaca,
+                              );
+                            }
+                          } else {
+                            setState(() {
+                              _autoValidateMode =
+                                  AutovalidateMode.onUserInteraction;
+                            });
+                          }
                         },
+
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColoresApp.primario,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 14),
+                            horizontal: 20,
+                            vertical: 14,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -244,8 +275,11 @@ class _NuevoServicioState extends State<NuevoServicio> {
 
   InputDecoration _estiloInput(String label, IconData icono) {
     return InputDecoration(
-      prefixIcon: Icon(icono,
-          color: ColoresApp.primario, size: TamanoIcono.grande),
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.grande,
+      ),
       labelText: label.isNotEmpty ? label : null,
       labelStyle: GoogleFonts.inter(
         fontSize: TamanoLetra.textoNormal,
@@ -273,8 +307,11 @@ class _NuevoServicioState extends State<NuevoServicio> {
 
   InputDecoration _estiloDropDown(IconData icono) {
     return InputDecoration(
-      prefixIcon: Icon(icono,
-          color: ColoresApp.primario, size: TamanoIcono.grande),
+      prefixIcon: Icon(
+        icono,
+        color: ColoresApp.primario,
+        size: TamanoIcono.grande,
+      ),
       labelStyle: GoogleFonts.inter(
         fontSize: TamanoLetra.textoNormal,
         color: ColoresApp.textoMedio,

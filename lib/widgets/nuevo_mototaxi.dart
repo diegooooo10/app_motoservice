@@ -18,7 +18,7 @@ class NuevoMototaxi extends StatefulWidget {
 
 class _NuevoMototaxiState extends State<NuevoMototaxi> {
   final _formKey = GlobalKey<FormBuilderState>();
-  final _autoValidate = AutovalidateMode.onUserInteraction;
+  AutovalidateMode _autoValidateMode = AutovalidateMode.onUserInteraction;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class _NuevoMototaxiState extends State<NuevoMototaxi> {
               padding: const EdgeInsets.all(16),
               child: FormBuilder(
                 key: _formKey,
-                autovalidateMode: _autoValidate,
+                autovalidateMode: _autoValidateMode,
                 child: Column(
                   children: [
                     FormBuilderTextField(
@@ -63,14 +63,14 @@ class _NuevoMototaxiState extends State<NuevoMototaxi> {
                       keyboardType: TextInputType.number,
                       maxLength: 10,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration:
-                          _estiloInput('Número telefónico', Icons.phone_outlined),
+                      decoration: _estiloInput('Número telefónico', Icons.phone_outlined),
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
                           errorText: 'El número es obligatorio',
                         ),
                         FormBuilderValidators.numeric(
-                            errorText: 'Solo números'),
+                          errorText: 'Solo números',
+                        ),
                         FormBuilderValidators.equalLength(
                           10,
                           errorText: 'Debe tener 10 dígitos',
@@ -86,8 +86,7 @@ class _NuevoMototaxiState extends State<NuevoMototaxi> {
                         FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
                         UpperCaseTextFormatter(),
                       ],
-                      decoration:
-                          _estiloInput('Placa', Icons.article_outlined),
+                      decoration: _estiloInput('Placa', Icons.article_outlined),
                       validator: (valueCandidate) {
                         final value = (valueCandidate ?? '').trim().toUpperCase();
                         if (value.isEmpty) return 'La placa es obligatoria';
@@ -104,8 +103,13 @@ class _NuevoMototaxiState extends State<NuevoMototaxi> {
                       child: ElevatedButton(
                         onPressed: () async {
                           final messenger = ScaffoldMessenger.of(context);
-                          if (!(_formKey.currentState?.saveAndValidate() ??
-                              false)) {
+                          final isValid =
+                              _formKey.currentState?.saveAndValidate() ?? false;
+
+                          if (!isValid) {
+                            setState(() {
+                              _autoValidateMode = AutovalidateMode.onUserInteraction;
+                            });
                             return;
                           }
 
@@ -134,14 +138,21 @@ class _NuevoMototaxiState extends State<NuevoMototaxi> {
                             ),
                           );
 
-                           if (!respuesta.startsWith('Error') && !respuesta.contains('existe')) {
+                          if (!respuesta.startsWith('Error') &&
+                              !respuesta.contains('existe')) {
+                            setState(() {
+                              _autoValidateMode = AutovalidateMode.disabled;
+                            });
                             _formKey.currentState?.reset();
-                          }   
+                          } else {
+                            setState(() {
+                              _autoValidateMode = AutovalidateMode.onUserInteraction;
+                            });
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColoresApp.primario,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
