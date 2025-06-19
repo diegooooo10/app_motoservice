@@ -153,7 +153,7 @@ class ServicioFirebase {
       final servicios = dataMototaxi?['servicios'] as List<dynamic>?;
 
       if (servicios == null || servicios.isEmpty) {
-        return 'No hay servicios para esta mototaxi';
+        return 'No hay servicios para este mototaxi';
       }
 
       List<Map<String, dynamic>> nuevosServicios =
@@ -164,7 +164,7 @@ class ServicioFirebase {
       );
 
       if (index == -1) {
-        return 'No se encontró el servicio en la mototaxi';
+        return 'No se encontró el servicio en el mototaxi';
       }
 
       nuevosServicios[index] = newServicio.toMap();
@@ -219,7 +219,7 @@ class ServicioFirebase {
           .doc(placa);
 
       final docSnapshot = await docRef.get();
-      if (!docSnapshot.exists) return 'No existe la mototaxi asociada.';
+      if (!docSnapshot.exists) return 'No existe el mototaxi asociada.';
 
       final servicios = List<Map<String, dynamic>>.from(
         docSnapshot.get('servicios') ?? [],
