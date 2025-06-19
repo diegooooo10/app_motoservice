@@ -104,7 +104,7 @@ class _MototaxisState extends State<Mototaxis> {
                   fontSize: TamanoLetra.textoPequeno,
                   color: ColoresApp.primario,
                   fontStyle: FontStyle.italic,
-                ),
+                ), 
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
