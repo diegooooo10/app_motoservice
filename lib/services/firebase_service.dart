@@ -1,4 +1,3 @@
-// import 'package:app_motoservice/models/historial_modelo.dart';
 import 'package:app_motoservice/models/historial_modelo.dart';
 import 'package:app_motoservice/models/mototaxis_modelo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 final FirebaseFirestore db = FirebaseFirestore.instance;
 final String uid = FirebaseAuth.instance.currentUser!.uid;
+
 
 class FirebaseService {
   static Stream<List<Mototaxi>> getMototaxisStream() {

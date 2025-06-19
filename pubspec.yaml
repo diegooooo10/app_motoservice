@@ -19,6 +19,7 @@ dependencies:
   firebase_auth: ^5.5.4
   intl: ^0.20.2
   flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
 
 dev_dependencies:
@@ -32,6 +33,7 @@ flutter:
   assets:
     - assets/.env
     - assets/img/
+    - assets/icon/
 
 flutter_native_splash:
   color: "#ffffff"
@@ -43,3 +45,8 @@ flutter_native_splash:
     color: "#ffffff"
     image: './assets/img/logo.png'
     icon_background_color: "#ffffff"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"

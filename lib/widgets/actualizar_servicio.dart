@@ -24,6 +24,7 @@ class ActualizarServicio extends StatefulWidget {
 class _ActualizarServicioState extends State<ActualizarServicio> {
   AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -120,22 +121,31 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
                     child: const Text('Cancelar'),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _actualizarServicio,
-                    icon: const Icon(Icons.save),
-                    label: const Text('Guardar'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColoresApp.primario,
-                      foregroundColor: ColoresApp.fondo,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 20,
+                  isSubmitting
+                      ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: ColoresApp.primario,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : ElevatedButton.icon(
+                        onPressed: isSubmitting ? null : _actualizarServicio,
+                        icon: const Icon(Icons.save),
+                        label: const Text('Guardar'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColoresApp.primario,
+                          foregroundColor: ColoresApp.fondo,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 20,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -147,6 +157,9 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
 
   Future<void> _actualizarServicio() async {
     if (formKey.currentState?.saveAndValidate() ?? false) {
+      setState(() {
+        isSubmitting = true;
+      });
       final data = formKey.currentState!.value;
 
       final servicioActualizado = Servicio(
@@ -193,6 +206,9 @@ class _ActualizarServicioState extends State<ActualizarServicio> {
         );
       }
     }
+    setState(() {
+      isSubmitting = false;
+    });
   }
 
   InputDecoration _estiloInput(String label, IconData icono) {
